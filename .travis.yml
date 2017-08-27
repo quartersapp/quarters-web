@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+- 8.3.0
+cache:
+  directories:
+  - node_modules
+branches:
+  only:
+  - master
+before_deploy:
+- npm run build
+script: npm test
+env:
+  global:
+  - secure: BNJAm205iG2xTHIKuTysWUtNw9Hv32tJrxqmKgwCKsHKzRchdfJWWtZSuePg7gSpyx3Zh7ruGQxmDQZ/IYC5xylCkzaIpSEJ1naGxm4dkXnJuBvcVd2gu/zjKgV3CY0zAkDW+s5sqLO0P/fXnVBBNW3Zp9Dy05uAahWyB5b8BucwAs9eu9HkptZeSqF/Vimdz7wQpMU0u08JOAXIjrpgmuM3KzzZ10lrBJ/Ydum+KeHYGBCbs5jy3Ehwkp1BVPTMQN5sSX7+MkM1TVzrUsA9KVVJA/ca06+EE+9cc2r/ewSaJJvzKtqcbYtHsCVRJqBZ/BxXxjbFAF/9LOkjyAohrxCig+LCcfLh/YukSST+MKgS7MFh9CkUDEI1pVXQZVUjnt1mSK3DQP+aVBraSGCvLuICbTLUMseOmoFuFUDwtWfPMkLmZWyClahVTAEuBZBREDj4VHNsXKgLOj1CDogYOvSgtc9SdmqQVWGbdA2Ied+me37rGe4gvIqUsEeY1hBb51Vs11BoL6cG+P8eQV/wFBxlJWTRPeDGx6y5idAs3rqZJUDJwilUSfBjM3j7+rR12odeGkVAcg5Nba+md1blfPbs4pVjLsnOaAzKZArrEylj22OXvvQh2CBL7shVWT6Kj608QbmRfX9U+kreVm+oEw3PiOECiRqiJCRO8TUMKnA=
+  - secure: OLhoc+K+c8vUYYUCpIwUpflRPY+H2uT3n7xRGQaiZzLDMOKg8hbK4CUvyRzPIdW8SHl4BIdsXQJsxMrbqzZBu8m+s1MUnsOLGzCtQXBLTscURIQVNEuXc7dgf0Htsl/1gbZzF70BDglOvK+EDddayMUuKQd5aDtLuQM5Zja5PX4vBSZWRqg3cyJjK2ZdtO6psdTEEGyRYMavoR+u8EXqWW31BRDGNm5b3h9rSWnEHiCgvyiGVIIBCJxHaj26MaaUAugFAEQpPQyRXJC26TENpjVYdeMNPyBFJuXUkA4sPMewJj5TIG+5x8LPV+4kgrptYfI7jtFQByGkyK6uv5UQzhi05Zsrd6G+8Tgeo9dhhI1DAAKR/hj3FwHBusYnSpDHX3k/azv/DuDlR8UqCjSsIn8bdbYjJ8mRX1sqe2caSOev5lGAVc931+dIFLmsD3uKFBcoKNLnxSP9mRertYwOGP5KDWZRyV+bm3BI8qPqYIz+qiBtHofG72IjoWZ0wwVDa0RyjtBUBP4pN6Q7/j0XQVQL/TFLaQrQjRs8sJYd2lNCVOvAYazC19pzcqPaaxkbpM8X2+Iud8JLRPPYYOqTKsO29sL/vSzvq1ukxKjaGRyWcmWokcjtLsD8jWo8Yrcz1vI0a+XOD/UlCzIfeTjB6PosDX4Slp6Li8u7R28GAO0=
+deploy:
+  provider: s3
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+  bucket: quarters-web-staging
+  local-dir: build
+  skip_cleanup: true
+  acl: public_read
+  on:
+    repo: quartersapp/quarters-web
+    branch: master
