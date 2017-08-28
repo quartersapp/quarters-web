@@ -1,0 +1,6 @@
+{
+  "moduleDirectories": [
+    "node_modules", "src"
+  ],
+  "setupTestFrameworkScriptFile": "./jest-setup.js"
+}
