@@ -2,5 +2,14 @@
   "moduleDirectories": [
     "node_modules", "src"
   ],
-  "setupTestFrameworkScriptFile": "./jest-setup.js"
+  "setupTestFrameworkScriptFile": "./jest-setup.js",
+  "coveragePathIgnorePatterns": [
+    "<rootDir>/node_modules",
+    "<rootDir>/jest-setup.js"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "lines": 90
+    }
+  }
 }

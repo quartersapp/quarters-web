@@ -4,12 +4,18 @@ node_js:
 cache:
   directories:
   - node_modules
+addons:
+  code_climate:
+    repo_token: $CODE_CLIMATE_TOKEN
 branches:
   only:
   - master
+script: npm test -- --coverage --ci --runInBand
+after_success:
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < ./coverage/lcov.info
 before_deploy:
 - npm run build
-script: npm test
 env:
   global:
   # AWS_ACCESS_KEY
@@ -18,6 +24,8 @@ env:
   - secure: OLhoc+K+c8vUYYUCpIwUpflRPY+H2uT3n7xRGQaiZzLDMOKg8hbK4CUvyRzPIdW8SHl4BIdsXQJsxMrbqzZBu8m+s1MUnsOLGzCtQXBLTscURIQVNEuXc7dgf0Htsl/1gbZzF70BDglOvK+EDddayMUuKQd5aDtLuQM5Zja5PX4vBSZWRqg3cyJjK2ZdtO6psdTEEGyRYMavoR+u8EXqWW31BRDGNm5b3h9rSWnEHiCgvyiGVIIBCJxHaj26MaaUAugFAEQpPQyRXJC26TENpjVYdeMNPyBFJuXUkA4sPMewJj5TIG+5x8LPV+4kgrptYfI7jtFQByGkyK6uv5UQzhi05Zsrd6G+8Tgeo9dhhI1DAAKR/hj3FwHBusYnSpDHX3k/azv/DuDlR8UqCjSsIn8bdbYjJ8mRX1sqe2caSOev5lGAVc931+dIFLmsD3uKFBcoKNLnxSP9mRertYwOGP5KDWZRyV+bm3BI8qPqYIz+qiBtHofG72IjoWZ0wwVDa0RyjtBUBP4pN6Q7/j0XQVQL/TFLaQrQjRs8sJYd2lNCVOvAYazC19pzcqPaaxkbpM8X2+Iud8JLRPPYYOqTKsO29sL/vSzvq1ukxKjaGRyWcmWokcjtLsD8jWo8Yrcz1vI0a+XOD/UlCzIfeTjB6PosDX4Slp6Li8u7R28GAO0=
   # API_URL
   - secure: AU+d64sFEEmk+gU8dK+4u3bFrtpgAicIONPP917EnBkYZ5AvVvjw1EfcVZJ4cAOtFJFCzPBn0eZ7yzbBQ5CTKG1HtZty1Rcy1FkM1CET4983ztrjmHxhEpFrnZfUgAe+lr/gsr5F4FJbOwcfeerpkCa5jfeNwsLLfZZFKyf21HtUP77qkyX+bBrzm+uUy2R/OzA8yLBA+Hs7+jgA/+mGhZ/6vfizYPI0Hg2OQjWo4u3ye9qaKH+stL1A0wM4TIOqT+lFkvee7JsgVatkNGIYn1Cgp8Qbe6EIo5fdrkCxVKcFTe42RwTQVVQwcg3aIJdTMeMO081veai3n6A8y/2k7oNVLz4iphbmSm/Tsgd2A232/sngS61mfCsdi8HQN/oeqdUHPkCi/DORtk4pfWQ1ljrXVL7DGYTl95mgw/Yi/1t6RzQ51rYopwb74aeKrSa7UUdFz+kywa8A6xaYAGnUaQuCrzF6JDwBaGDzygraI87iiflZCM9AGmTgQQvKyeO16wwoHU+1pwpXbO06aKgk5jeUrEFUEwFADU7d7mw84r7EeVh7ncUlMy4i3hxYpAU++NnCl1fZyUn9r5i9yfGB5DeSs41k+vRfAEK95MYPzJx5iFtZmJXzrsV3WP7ux5PC+xr+6xuF6AmzviBh9Pu28KmC+WgZeJWOiy/e8AgpLUU=
+  # CODE_CLIMATE_TOKEN
+  - secure: tYW2HeIPXlDYuutV2HagC8S3dX/AIJt3NMOgdYTFmgVWMaYQyElnenXBbNKsRitRnbpRANqBt4KE+sGK8VbGAY1sDgtbkUR5HjEuwH1VvPRWoLfTu0oFP5dzSIvOq/o2nnqY5xEsNEPyxYiHuA+itaweH05did696y4mdFrqbgWe3VGQqzAUlGV1sDLyCh0ELENlReF+o3TdrUTrWayA+xzJFWskr2TLYcfAI/QDB3hELD+PrUzyvIcxDwK2MteABI2anjI3T8IWKGbfz1AnvjngtVrH3PQuboU++9k1v2hAtqYuVsMbOCKoY5QD3gPMWr86siKku/7X+O7GSCkgXJ+yef9PdqCARk7lpBp1CTzqCeYUTnDg+m0jAK+YvfmGfmNsSIn9Zuo6ESA2hwyDiPFbzHkFZizuHWt8X33OUzKiNjxAXL+xs4cs8wbRm+VFA+Fif8oP1scbxnLcj/Tii3H/r3mEPSfFdXjNuplx99GCkiFuU9rJ39fd1SyhEY3nDWlYVkPTUf9LOuH/LwDDD3zcuDnk8dcK0lQA1Nzmp4hKQKlDUuySzZVlT7oPgiyX3Ejsh18OWLo14cELAF8BP4lAzXfNQ6lcTgRqOi58EkGq0n8FIz2aDlpLoNf7t3HA0oKejXJs8gF/fxdCGwpu3zCsarGZm9scQTSEIBP2H/8=
 deploy:
   provider: s3
   access_key_id: "$AWS_ACCESS_KEY"
