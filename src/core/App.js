@@ -1,7 +1,12 @@
 import React from 'react'
+import { Provider } from 'react-redux'
 
-const App = props => (
-  <h1>Quarters</h1>
+import { Root } from './root'
+
+const App = ({ store }) => (
+  <Provider store={store}>
+    <Root />
+  </Provider>
 )
 
 export default App

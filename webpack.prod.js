@@ -1,6 +1,8 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 
+process.env.NODE_ENV = 'production' // set NODE_ENV for config import
+
 const productionConfig = {
   output: {
     filename: '[name].[chunkhash].js',

@@ -1,5 +1,11 @@
 const { resolve } = require('path')
+const { writeFileSync } = require('fs')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { EnvironmentPlugin } = require('webpack')
+const config = require('config')
+
+const configPath = resolve(__dirname, 'config.json')
+writeFileSync(configPath, JSON.stringify(config))
 
 const paths = {
   build: resolve(__dirname, 'build'),
@@ -24,8 +30,9 @@ module.exports = {
 
   resolve: {
     alias: {
-      services: resolve(paths.src, 'services'),
-      shared: resolve(paths.src, 'shared')
+      config: configPath,
+      common: resolve(paths.src, 'common'),
+      core: resolve(paths.src, 'core')
     }
   },
 
@@ -42,6 +49,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: resolve(paths.public, 'index.html')
+    }),
+    new EnvironmentPlugin({
+      NODE_ENV: 'production'
     })
   ]
 }
