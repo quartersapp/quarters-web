@@ -3,6 +3,7 @@
 
 import nock from 'nock'
 import { API_URL } from 'config'
+import sagaHelper from 'redux-saga-testing'
 import { loginRequest, loginStart, loginSuccess, loginError, logout } from '../actions'
 import { authenticatedSelector } from '../selectors'
 import { LOGOUT, LOGIN_REQUEST, LOGIN_ERROR } from '../types'
@@ -13,76 +14,139 @@ import { createMockTask } from 'redux-saga/utils'
 beforeEach(() => localStorage.clear())
 afterEach(() => nock.cleanAll())
 
+const email = 'test@example.com'
+const password = 'password'
+
 describe('manageAuthentication', () => {
-  it('allows the user to login after a failed login attempt', () => {
-    const gen = manageAuthentication()
-    expect(gen.next().value).toEqual(select(authenticatedSelector))
-    expect(gen.next(false).value).toEqual(take(LOGIN_REQUEST))
+  describe('logging in after a failed login attempt', () => {
+    const it = sagaHelper(manageAuthentication())
 
-    const email = 'test@example.com'
-    const password = 'password'
+    it('checks if the user is currently authenticated', result => {
+      expect(result).toEqual(select(authenticatedSelector))
+      return false
+    })
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
-    expect(gen.next(createMockTask()).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
-    expect(gen.next(loginError(new Error('Something happened'))).value).toEqual(take(LOGIN_REQUEST))
+    it('takes a login request', result => {
+      expect(result).toEqual(take(LOGIN_REQUEST))
+      return loginRequest(email, password)
+    })
+
+    it('forks an authorize task', result => {
+      expect(result).toEqual(fork(authorize, email, password))
+      return createMockTask()
+    })
+
+    it('takes a LOGIN_ERROR', result => {
+      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+      return loginError(new Error('Invalid credentials'))
+    })
+
+    it('takes a LOGIN_REQUEST', result => {
+      expect(result).toEqual(take(LOGIN_REQUEST))
+    })
   })
 
-  it('allows the user to cancel a pending login', () => {
-    const gen = manageAuthentication()
-    expect(gen.next().value).toEqual(select(authenticatedSelector))
-    expect(gen.next(false).value).toEqual(take(LOGIN_REQUEST))
+  describe('cancelling a pending login', () => {
+    const it = sagaHelper(manageAuthentication())
 
-    const email = 'test@example.com'
-    const password = 'password'
+    it('checks if the user is currently authenticated', result => {
+      expect(result).toEqual(select(authenticatedSelector))
+      return false
+    })
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
+    it('takes a login request', result => {
+      expect(result).toEqual(take(LOGIN_REQUEST))
+      return loginRequest(email, password)
+    })
 
-    const loginTask = createMockTask()
-    expect(gen.next(loginTask).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
-    expect(gen.next(logout()).value).toEqual(cancel(loginTask))
-    expect(gen.next().value).toEqual(take(LOGIN_REQUEST))
+    let loginTask
+
+    it('forks an authorize task', result => {
+      expect(result).toEqual(fork(authorize, email, password))
+      loginTask = createMockTask()
+      return loginTask
+    })
+
+    it('takes a LOGOUT', result => {
+      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+      return logout()
+    })
+
+    it('cancels the login task', result => {
+      expect(result).toEqual(cancel(loginTask))
+    })
+
+    it('takes a new login request', result => {
+      expect(result).toEqual(take(LOGIN_REQUEST))
+    })
   })
 
-  it('allows the user to log out then log back in', () => {
-    localStorage.setItem('authToken', 'some_token')
+  describe('logging out then back in', () => {
+    const it = sagaHelper(manageAuthentication())
 
-    const gen = manageAuthentication()
-    expect(gen.next().value).toEqual(select(authenticatedSelector))
-    expect(gen.next(true).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
-    expect(gen.next(logout()).value).toEqual(take(LOGIN_REQUEST))
+    beforeEach(() => {
+      localStorage.setItem('authToken', 'some_token')
+    })
 
-    expect(localStorage.getItem('authToken')).toEqual(null)
+    it('checks if the user is currently authenticated', result => {
+      expect(result).toEqual(select(authenticatedSelector))
+      return true
+    })
+
+    it('takes a LOGOUT action', result => {
+      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+      return logout()
+    })
+
+    it('clears the auth token from localStorage take a new login request', result => {
+      expect(localStorage.getItem('authToken')).toEqual(null)
+      expect(result).toEqual(take(LOGIN_REQUEST))
+    })
   })
 })
 
 describe('authorize', () => {
-  it('logs the user in, stores the auth token in localStorage and dispatches loginSuccess', () => {
-    const email = 'test@example.com'
-    const password = 'password'
+  describe('successful login', () => {
+    const it = sagaHelper(authorize(email, password))
 
-    const gen = authorize('test@example.com', password)
-    expect(gen.next().value).toEqual(put(loginStart()))
-    expect(gen.next().value).toEqual(call(login, email, password))
+    it('dispatches a loginStart', result => {
+      expect(result).toEqual(put(loginStart()))
+    })
 
     const token = 'some_token'
-    expect(gen.next(token).value).toEqual(put(loginSuccess(token)))
 
-    expect(localStorage.getItem('authToken')).toEqual(token)
+    it('calls login', result => {
+      expect(result).toEqual(call(login, email, password))
+      return token
+    })
 
-    expect(gen.next()).toEqual({ value: token, done: true })
+    it('stores the token in localStorage and dispatches a loginSuccess', (result) => {
+      expect(localStorage.getItem('authToken')).toEqual(token)
+      expect(result).toEqual(put(loginSuccess(token)))
+    })
+
+    it('finishes', result => expect(result).toBeUndefined())
   })
 
-  it('handles a login error', () => {
-    const email = 'test@example.com'
-    const password = 'password'
+  describe('login error', () => {
+    const it = sagaHelper(authorize(email, password))
 
-    const gen = authorize('test@example.com', password)
-    expect(gen.next().value).toEqual(put(loginStart()))
-    expect(gen.next().value).toEqual(call(login, email, password))
+    it('dispatches a loginStart', result => {
+      expect(result).toEqual(put(loginStart()))
+    })
 
     const error = new Error('Invalid credentials')
 
-    expect(gen.throw(error).value).toEqual(put(loginError(error)))
+    it('calls login', result => {
+      expect(result).toEqual(call(login, email, password))
+      return error
+    })
+
+    it('dispatches a loginError', result => {
+      expect(result).toEqual(put(loginError(error)))
+    })
+
+    it('finishes', result => expect(result).toBeUndefined())
   })
 })
 

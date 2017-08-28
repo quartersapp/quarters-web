@@ -42,7 +42,6 @@ export function * authorize (email, password) {
 
     localStorage.setItem('authToken', token)
     yield put(loginSuccess(token))
-    return token
   } catch (err) {
     yield put(loginError(err))
   }
