@@ -1,12 +1,12 @@
 import React from 'react'
-import { Provider } from 'react-redux'
+import { ApolloProvider } from 'react-apollo'
 
 import { Root } from './root'
 
-const App = ({ store }) => (
-  <Provider store={store}>
+const App = ({ apolloClient, store }) => (
+  <ApolloProvider store={store} client={apolloClient}>
     <Root />
-  </Provider>
+  </ApolloProvider>
 )
 
 export default App

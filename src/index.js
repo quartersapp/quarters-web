@@ -4,13 +4,15 @@ import { AppContainer } from 'react-hot-loader'
 
 import App from 'core/App'
 import { createStore } from 'core/store'
+import { createApolloClient } from 'core/apollo-client'
 
-const store = createStore()
+const apolloClient = createApolloClient()
+const store = createStore({ apolloClient })
 
 const renderApp = AppComponent => {
   return ReactDOM.render(
     <AppContainer>
-      <AppComponent store={store} />
+      <AppComponent store={store} apolloClient={apolloClient} />
     </AppContainer>,
     document.getElementById('root')
   )
