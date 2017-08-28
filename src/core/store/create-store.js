@@ -3,7 +3,7 @@ import createSagaMiddleware from 'redux-saga'
 import createRootReducer from './create-root-reducer'
 import rootSaga from './root-saga'
 
-export default ({ apolloClient }) => {
+export default ({ apolloClient, authenticated = false }) => {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
   const sagaMiddleware = createSagaMiddleware()
@@ -12,7 +12,7 @@ export default ({ apolloClient }) => {
 
   const store = createStore(
     createRootReducer({ apolloReducer }),
-    undefined,
+    { auth: { authenticated } },
     composeEnhancers(
       applyMiddleware(
         sagaMiddleware,

@@ -3,7 +3,7 @@
 
 import nock from 'nock'
 import { API_URL } from 'config'
-import { loginRequest, loginSuccess, loginError, logout } from '../actions'
+import { loginRequest, loginStart, loginSuccess, loginError, logout } from '../actions'
 import { authenticatedSelector } from '../selectors'
 import { LOGOUT, LOGIN_REQUEST, LOGIN_ERROR } from '../types'
 import { authenticationManager, authorize, login } from '../sagas'
@@ -22,7 +22,8 @@ describe('authenticationManager', () => {
     const email = 'test@example.com'
     const password = 'password'
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
+    expect(gen.next(loginRequest(email, password)).value).toEqual(put(loginStart()))
+    expect(gen.next().value).toEqual(fork(authorize, email, password))
     expect(gen.next(createMockTask()).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
     expect(gen.next(loginError(new Error('Something happened'))).value).toEqual(take(LOGIN_REQUEST))
   })
@@ -35,7 +36,8 @@ describe('authenticationManager', () => {
     const email = 'test@example.com'
     const password = 'password'
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
+    expect(gen.next(loginRequest(email, password)).value).toEqual(put(loginStart()))
+    expect(gen.next().value).toEqual(fork(authorize, email, password))
 
     const loginTask = createMockTask()
     expect(gen.next(loginTask).value).toEqual(take([LOGOUT, LOGIN_ERROR]))

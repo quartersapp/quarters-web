@@ -4,7 +4,7 @@ import 'isomorphic-fetch'
 import { take, call, fork, put, cancel, select } from 'redux-saga/effects'
 import { API_URL } from 'config'
 
-import { loginError, loginSuccess } from './actions'
+import { loginStart, loginError, loginSuccess } from './actions'
 import { authenticatedSelector } from './selectors'
 
 import {
@@ -21,6 +21,7 @@ export function * authenticationManager () {
 
     if (!authenticated) {
       const { payload: { email, password } } = yield take(LOGIN_REQUEST)
+      yield put(loginStart())
       loginTask = yield fork(authorize, email, password)
     }
 

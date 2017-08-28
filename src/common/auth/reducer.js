@@ -1,47 +1,32 @@
-/* global localStorage */
-
-import { createReducer } from 'redux-create-reducer'
-import immutable from 'seamless-immutable'
+import { combineReducers } from 'redux'
 import {
-  LOGIN_REQUEST,
+  LOGIN_START,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   LOGOUT
 } from './types'
-const Immutable = immutable.static
+import { booleanReducer } from 'common/helpers'
 
-const tokenInState = localStorage.getItem('authToken')
-
-const initialState = Immutable({
-  authenticated: !!tokenInState,
-  loggingIn: false,
-  loginError: null
-})
-
-export default createReducer(initialState, {
-  [LOGIN_REQUEST] (state) {
-    return Immutable.merge(state, {
-      loggingIn: true,
-      loginError: null
-    })
-  },
-  [LOGIN_SUCCESS] (state, { payload }) {
-    return Immutable.merge(state, {
-      authenticated: true,
-      loggingIn: false
-    })
-  },
-  [LOGIN_ERROR] (state, { payload: error }) {
-    return Immutable.merge(state, {
-      loggingIn: false,
-      loginError: error.message
-    })
-  },
-  [LOGOUT] (state, { payload: error }) {
-    return Immutable.merge(state, {
-      authenticated: false,
-      loggingIn: false,
-      loginError: null
-    })
+export default combineReducers({
+  authenticated: booleanReducer({
+    initialState: false,
+    true: [LOGIN_SUCCESS],
+    false: [LOGIN_ERROR, LOGOUT]
+  }),
+  loggingIn: booleanReducer({
+    initialState: false,
+    true: [LOGIN_START],
+    false: [LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT]
+  }),
+  loginError: (state = null, action) => {
+    switch (action.type) {
+      case LOGIN_ERROR:
+        return action.payload.message
+      case LOGIN_START:
+      case LOGOUT:
+        return null
+      default:
+        return state
+    }
   }
 })

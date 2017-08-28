@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 import reducer from '../reducer'
-import { loginRequest, loginSuccess, loginError, logout } from '../actions'
+import { loginStart, loginSuccess, loginError, logout } from '../actions'
 import {
   authenticatedSelector,
   loggingInSelector,
@@ -23,13 +23,13 @@ it('manages the loggingIn flag while a login is occuring', () => {
   let state = reducer(undefined, { type: '@@INIT' })
   expect(loggingInSelector({ auth: state })).toEqual(false)
 
-  state = reducer(state, loginRequest('test@example.com', 'password'))
+  state = reducer(state, loginStart())
   expect(loggingInSelector({ auth: state })).toEqual(true)
 
   state = reducer(state, loginSuccess('api_token'))
   expect(loggingInSelector({ auth: state })).toEqual(false)
 
-  state = reducer(state, loginRequest('test@example.com', 'password'))
+  state = reducer(state, loginStart())
   expect(loggingInSelector({ auth: state })).toEqual(true)
 
   state = reducer(state, loginError(new Error('Something went wrong')))
@@ -43,12 +43,12 @@ it('populates loginError with the error message', () => {
   state = reducer(state, loginError(new Error('Invalid credentials')))
   expect(loginErrorMessageSelector({ auth: state })).toEqual('Invalid credentials')
 
-  state = reducer(state, loginRequest('test@example.com', 'password'))
+  state = reducer(state, loginStart())
   expect(loginErrorMessageSelector({ auth: state })).toEqual(null)
 })
 
-it('clears the state on logout', () => {
-  let state = reducer(undefined, loginRequest('test@example.com', 'password'))
+it('logout state when login is cancelled', () => {
+  let state = reducer(undefined, loginStart())
 
   state = reducer(state, logout())
   expect(loggingInSelector({ auth: state })).toEqual(false)

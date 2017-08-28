@@ -15,6 +15,7 @@ export default createReducer(initialState, {
   [CHANGE_VALUE] (state, { payload }) {
     return Immutable.set(state, payload.field, payload.value)
   },
+
   [RESET_FORM] (state) {
     return initialState
   }
