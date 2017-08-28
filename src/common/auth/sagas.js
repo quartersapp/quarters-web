@@ -56,9 +56,9 @@ function * authorize (email, password) {
   try {
     const token = yield call(login, email, password)
 
-    yield put(loginSuccess(token))
-
     localStorage.setItem('authToken', token)
+
+    yield put(loginSuccess(token))
 
     return token
   } catch (err) {
