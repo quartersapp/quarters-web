@@ -1,5 +1,5 @@
 export { default as reducer } from './reducer'
-export { authenticationManager } from './sagas'
+export { manageAuthentication } from './sagas'
 export { loginRequest, logout } from './actions'
 export {
   authenticatedSelector,

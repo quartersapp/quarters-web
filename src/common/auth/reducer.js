@@ -13,11 +13,13 @@ export default combineReducers({
     true: [LOGIN_SUCCESS],
     false: [LOGIN_ERROR, LOGOUT]
   }),
+
   loggingIn: booleanReducer({
     initialState: false,
     true: [LOGIN_START],
     false: [LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT]
   }),
+
   loginError: (state = null, action) => {
     switch (action.type) {
       case LOGIN_ERROR:

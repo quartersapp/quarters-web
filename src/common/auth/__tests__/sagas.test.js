@@ -6,38 +6,36 @@ import { API_URL } from 'config'
 import { loginRequest, loginStart, loginSuccess, loginError, logout } from '../actions'
 import { authenticatedSelector } from '../selectors'
 import { LOGOUT, LOGIN_REQUEST, LOGIN_ERROR } from '../types'
-import { authenticationManager, authorize, login } from '../sagas'
+import { manageAuthentication, authorize, login } from '../sagas'
 import { call, put, select, take, fork, cancel } from 'redux-saga/effects'
 import { createMockTask } from 'redux-saga/utils'
 
 beforeEach(() => localStorage.clear())
 afterEach(() => nock.cleanAll())
 
-describe('authenticationManager', () => {
+describe('manageAuthentication', () => {
   it('allows the user to login after a failed login attempt', () => {
-    const gen = authenticationManager()
+    const gen = manageAuthentication()
     expect(gen.next().value).toEqual(select(authenticatedSelector))
     expect(gen.next(false).value).toEqual(take(LOGIN_REQUEST))
 
     const email = 'test@example.com'
     const password = 'password'
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(put(loginStart()))
-    expect(gen.next().value).toEqual(fork(authorize, email, password))
+    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
     expect(gen.next(createMockTask()).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
     expect(gen.next(loginError(new Error('Something happened'))).value).toEqual(take(LOGIN_REQUEST))
   })
 
   it('allows the user to cancel a pending login', () => {
-    const gen = authenticationManager()
+    const gen = manageAuthentication()
     expect(gen.next().value).toEqual(select(authenticatedSelector))
     expect(gen.next(false).value).toEqual(take(LOGIN_REQUEST))
 
     const email = 'test@example.com'
     const password = 'password'
 
-    expect(gen.next(loginRequest(email, password)).value).toEqual(put(loginStart()))
-    expect(gen.next().value).toEqual(fork(authorize, email, password))
+    expect(gen.next(loginRequest(email, password)).value).toEqual(fork(authorize, email, password))
 
     const loginTask = createMockTask()
     expect(gen.next(loginTask).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
@@ -48,7 +46,7 @@ describe('authenticationManager', () => {
   it('allows the user to log out then log back in', () => {
     localStorage.setItem('authToken', 'some_token')
 
-    const gen = authenticationManager()
+    const gen = manageAuthentication()
     expect(gen.next().value).toEqual(select(authenticatedSelector))
     expect(gen.next(true).value).toEqual(take([LOGOUT, LOGIN_ERROR]))
     expect(gen.next(logout()).value).toEqual(take(LOGIN_REQUEST))
@@ -63,6 +61,7 @@ describe('authorize', () => {
     const password = 'password'
 
     const gen = authorize('test@example.com', password)
+    expect(gen.next().value).toEqual(put(loginStart()))
     expect(gen.next().value).toEqual(call(login, email, password))
 
     const token = 'some_token'
@@ -78,6 +77,7 @@ describe('authorize', () => {
     const password = 'password'
 
     const gen = authorize('test@example.com', password)
+    expect(gen.next().value).toEqual(put(loginStart()))
     expect(gen.next().value).toEqual(call(login, email, password))
 
     const error = new Error('Invalid credentials')

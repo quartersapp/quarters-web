@@ -6,14 +6,13 @@ import { API_URL } from 'config'
 
 import { loginStart, loginError, loginSuccess } from './actions'
 import { authenticatedSelector } from './selectors'
-
 import {
   LOGIN_REQUEST,
   LOGIN_ERROR,
   LOGOUT
 } from './types'
 
-export function * authenticationManager () {
+export function * manageAuthentication () {
   let authenticated = yield select(authenticatedSelector)
 
   while (true) {
@@ -21,30 +20,28 @@ export function * authenticationManager () {
 
     if (!authenticated) {
       const { payload: { email, password } } = yield take(LOGIN_REQUEST)
-      yield put(loginStart())
       loginTask = yield fork(authorize, email, password)
     }
 
     const action = yield take([LOGOUT, LOGIN_ERROR])
-
     if (action.type === LOGOUT) {
       authenticated = false
-      localStorage.removeItem('authToken')
-      if (loginTask) {
+      if (loginTask && loginTask.isRunning()) {
         yield cancel(loginTask)
       }
+      localStorage.removeItem('authToken')
     }
   }
 }
 
 export function * authorize (email, password) {
+  yield put(loginStart())
+
   try {
     const token = yield call(login, email, password)
 
     localStorage.setItem('authToken', token)
-
     yield put(loginSuccess(token))
-
     return token
   } catch (err) {
     yield put(loginError(err))
