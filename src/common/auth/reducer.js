@@ -1,4 +1,4 @@
-/* global */
+/* global localStorage */
 
 import { createReducer } from 'redux-create-reducer'
 import immutable from 'seamless-immutable'
@@ -10,7 +10,10 @@ import {
 } from './types'
 const Immutable = immutable.static
 
+const tokenInState = localStorage.getItem('authToken')
+
 const initialState = Immutable({
+  authenticated: !!tokenInState,
   loggingIn: false,
   loginError: null
 })
@@ -24,6 +27,7 @@ export default createReducer(initialState, {
   },
   [LOGIN_SUCCESS] (state, { payload }) {
     return Immutable.merge(state, {
+      authenticated: true,
       loggingIn: false
     })
   },
@@ -35,6 +39,7 @@ export default createReducer(initialState, {
   },
   [LOGOUT] (state, { payload: error }) {
     return Immutable.merge(state, {
+      authenticated: false,
       loggingIn: false,
       loginError: null
     })
