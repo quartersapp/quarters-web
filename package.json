@@ -5,11 +5,13 @@
   "main": "index.js",
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
+    "prop-types": "^15.5.10",
     "react": "^16.0.0-beta.5",
     "react-apollo": "^1.4.15",
     "react-dom": "^16.0.0-beta.5",
     "react-hot-loader": "^3.0.0-beta.7",
     "react-redux": "^5.0.6",
+    "recompose": "^0.25.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-create-reducer": "^1.1.1",

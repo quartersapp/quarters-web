@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
+import { compose } from 'recompose'
 
 import {
   loginRequest,
@@ -8,11 +9,36 @@ import {
   loginErrorMessageSelector
 } from 'common/auth'
 
-import {
-  emailSelector,
-  passwordSelector
-} from './selectors'
+import { createForm, formValueSelector } from 'common/form'
+
+import { FORM_NAME } from './types'
 import { changeValue, resetForm } from './actions'
+
+const Form = createForm('login')
+
+const LoginForm = ({ handleLogin }) => (
+  <Form handleLogin={handleLogin}>
+    <h3>Login</h3>
+    <Input type='text' placeholder='email' name='email' disabled={submitting} />
+    <Input type='password' placeholder='password' name='password' disabled={submitting} />
+    <br />
+    <input
+      name='password'
+      placeholder='Password'
+      type='password'
+      onChange={handleChangeValue('password')}
+      value={password}
+      disabled={submitting}
+    />
+    <br />
+    <button type='submit' disabled={submitting}>Login</button>
+    {error && (
+      <p style={{ color: 'red' }}>
+        {error}
+      </p>
+    )}
+  </Form>
+)
 
 class LoginForm extends Component {
   componentWillUnmount () {
@@ -33,42 +59,18 @@ class LoginForm extends Component {
   render () {
     const { email, password, submitting, error } = this.props
 
-    return (
-      <form onSubmit={this.handleLogin}>
-        <h3>Login</h3>
-        <input
-          name='email'
-          placeholder='Email'
-          type='text'
-          onChange={this.handleChangeValue('email')}
-          value={email}
-          disabled={submitting}
-        />
-        <br />
-        <input
-          name='password'
-          placeholder='Password'
-          type='password'
-          onChange={this.handleChangeValue('password')}
-          value={password}
-          disabled={submitting}
-        />
-        <br />
-        <button type='submit' disabled={submitting}>Login</button>
-        {error && (
-          <p style={{ color: 'red' }}>
-            {error}
-          </p>
-        )}
-      </form>
-    )
+    return
   }
 }
 
+export default compose(
+
+)(LoginForm)
+
 export default connect(
   createStructuredSelector({
-    email: emailSelector,
-    password: passwordSelector,
+    email: formValueSelector(FORM_NAME, 'email'),
+    password: formValueSelector(FORM_NAME, 'password'),
     submitting: loggingInSelector,
     error: loginErrorMessageSelector
   }),

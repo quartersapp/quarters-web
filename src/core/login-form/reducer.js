@@ -1,19 +1,18 @@
 import { createReducer } from 'redux-create-reducer'
-import immutable from 'seamless-immutable'
+import Immutable from 'seamless-immutable'
 import {
   CHANGE_VALUE,
   RESET_FORM
 } from './types'
-const Immutable = immutable.static
 
-const initialState = Immutable({
+const initialState = Immutable.from({
   email: '',
   password: ''
 })
 
 export default createReducer(initialState, {
   [CHANGE_VALUE] (state, { payload }) {
-    return Immutable.set(state, payload.field, payload.value)
+    return Immutable.static.set(state, payload.field, payload.value)
   },
 
   [RESET_FORM] (state) {
