@@ -2,6 +2,12 @@
 
 import booleanReducer from '../boolean-reducer'
 
+it('throws an error if no options provided', () => {
+  expect(booleanReducer).toThrow(
+    new Error('booleanReducer requires an object of options to be passed')
+  )
+})
+
 it('can allows initial state to be set, defaulting to false', () => {
   let reducer
 
@@ -11,7 +17,7 @@ it('can allows initial state to be set, defaulting to false', () => {
   reducer = booleanReducer({ initialState: true })
   expect(reducer(undefined, { type: '@@INIT' })).toEqual(true)
 
-  reducer = booleanReducer() // default
+  reducer = booleanReducer({}) // default
   expect(reducer(undefined, { type: '@@INIT' })).toEqual(false)
 })
 

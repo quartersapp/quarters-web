@@ -1,1 +1,1 @@
-export const FORM_NAME = 'login'
+export const LOGIN_FORM_NAME = 'login'

@@ -1,4 +1,4 @@
-import { namespacer } from 'helpers'
+import { namespacer } from 'common/helpers'
 
 const namespace = namespacer('FORM')
 

@@ -1,4 +1,8 @@
-module.exports = (options = {}) => {
+export default options => {
+  if (typeof options !== 'object') {
+    throw new Error('booleanReducer requires an object of options to be passed')
+  }
+
   const {
     initialState = false,
     true: trueActions = [],

@@ -1,37 +1,25 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
-import { compose } from 'recompose'
-
+import { createForm, createFormField } from 'common/form'
 import {
   loginRequest,
   loggingInSelector,
   loginErrorMessageSelector
 } from 'common/auth'
+import { LOGIN_FORM_NAME } from './constants'
+import { formIsValidSelector } from './selectors'
 
-import { createForm, formValueSelector } from 'common/form'
+const Form = createForm({ name: LOGIN_FORM_NAME })
+const Input = createFormField()(props => <input {...props} />)
 
-import { FORM_NAME } from './types'
-import { changeValue, resetForm } from './actions'
-
-const Form = createForm('login')
-
-const LoginForm = ({ handleLogin }) => (
-  <Form handleLogin={handleLogin}>
+const LoginForm = ({ loginRequest, submitting, error, valid }) => (
+  <Form onSubmit={({ email, password }) => loginRequest(email, password)}>
     <h3>Login</h3>
     <Input type='text' placeholder='email' name='email' disabled={submitting} />
+    <br />
     <Input type='password' placeholder='password' name='password' disabled={submitting} />
-    <br />
-    <input
-      name='password'
-      placeholder='Password'
-      type='password'
-      onChange={handleChangeValue('password')}
-      value={password}
-      disabled={submitting}
-    />
-    <br />
-    <button type='submit' disabled={submitting}>Login</button>
+    <button type='submit' disabled={!valid || submitting}>Login</button>
     {error && (
       <p style={{ color: 'red' }}>
         {error}
@@ -40,39 +28,11 @@ const LoginForm = ({ handleLogin }) => (
   </Form>
 )
 
-class LoginForm extends Component {
-  componentWillUnmount () {
-    this.props.resetForm()
-  }
-
-  handleLogin = e => {
-    e.preventDefault()
-
-    const { email, password, loginRequest } = this.props
-    loginRequest(email, password)
-  }
-
-  handleChangeValue = field => e => {
-    this.props.changeValue(field, e.target.value)
-  }
-
-  render () {
-    const { email, password, submitting, error } = this.props
-
-    return
-  }
-}
-
-export default compose(
-
-)(LoginForm)
-
 export default connect(
   createStructuredSelector({
-    email: formValueSelector(FORM_NAME, 'email'),
-    password: formValueSelector(FORM_NAME, 'password'),
+    valid: formIsValidSelector,
     submitting: loggingInSelector,
     error: loginErrorMessageSelector
   }),
-  { changeValue, loginRequest, resetForm }
+  { loginRequest }
 )(LoginForm)

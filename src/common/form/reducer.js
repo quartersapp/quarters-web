@@ -1,21 +1,21 @@
 import { createReducer } from 'redux-create-reducer'
 import Immutable from 'seamless-immutable'
-import { keyedReducer } from 'helpers'
+import { keyedReducer } from 'common/helpers'
 import {
-  CHANGE_VALUE,
+  CHANGE_FORM_VALUE,
   DESTROY_FORM,
   INITIALIZE_FORM
 } from './types'
 
-const formReducer = createReducer(null, {
+export const formReducer = createReducer(null, {
   [INITIALIZE_FORM] (state, { payload }) {
     return Immutable.static({
       values: payload.initialValues
     })
   },
 
-  [CHANGE_VALUE] (state, { payload }) {
-    return Immutable.static.set(state, ['values', payload.field], payload.value)
+  [CHANGE_FORM_VALUE] (state, { payload }) {
+    return Immutable.static.setIn(state, ['values', payload.field], payload.value)
   }
 })
 

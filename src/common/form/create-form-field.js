@@ -6,11 +6,6 @@ import { changeFormValue } from './actions'
 
 const createFormField = () => WrappedComponent => {
   class FormField extends Component {
-    propTypes = {
-      name: PropTypes.string.isRequired,
-      formState: PropTypes.object.isRequired
-    }
-
     getFormName () {
       return this.context.form
     }
@@ -25,10 +20,19 @@ const createFormField = () => WrappedComponent => {
       const field = this.props.name
       const value = this.props.formState[form].values[field]
 
-      return ( // TODO look into pure component for here
+      return (
         <WrappedComponent {...this.props} onChange={this.handleChange} value={value} />
       )
     }
+  }
+
+  FormField.propTypes = {
+    name: PropTypes.string.isRequired,
+    formState: PropTypes.object.isRequired
+  }
+
+  FormField.contextTypes = {
+    form: PropTypes.string
   }
 
   return connect(
