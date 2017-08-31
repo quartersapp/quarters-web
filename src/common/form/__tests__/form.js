@@ -2,6 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
+import { getContext } from 'recompose'
 import { mount } from 'enzyme'
 import renderer from 'react-test-renderer'
 import Immutable from 'seamless-immutable'
@@ -20,10 +21,16 @@ describe('Form', () => {
     expect(tree.toJSON()).toMatchSnapshot()
   })
 
-  it('sets the form name to the context', () => {
-    /* Couldn't get context testing with enzyme working, so this will have to do */
-    expect(Form.childContextTypes).toEqual({ form: PropTypes.string })
-    expect(new Form({ name: FORM_NAME }).getChildContext()).toEqual({ form: FORM_NAME })
+  it('sets the context for children', () => {
+    const TestComponent = props => null
+    const TestComponentWithContext = getContext({ form: PropTypes.string })(TestComponent)
+    const wrapper = mount(
+      <Form name={FORM_NAME} initializeForm={noop}>
+        <TestComponentWithContext />
+      </Form>
+    )
+
+    expect(wrapper.find(TestComponent).prop('form')).toEqual(FORM_NAME)
   })
 
   it('dispatches initialize and destroy actions on mount', () => {
@@ -40,7 +47,23 @@ describe('Form', () => {
     expect(destroyForm).toBeCalled()
   })
 
-  it('dispatches a rename action the form if the name prop changes', () => {
+  it('can disable destroy on unmount', () => {
+    const destroyForm = jest.fn()
+
+    const wrapper = mount(
+      <Form
+        name={FORM_NAME}
+        initializeForm={noop}
+        destroyForm={destroyForm}
+        destroyOnUnmount={false}
+      />
+    )
+
+    wrapper.unmount()
+    expect(destroyForm).not.toBeCalled()
+  })
+
+  it('dispatches a rename action if the name prop changes', () => {
     const renameForm = jest.fn()
     const NEW_FORM_NAME = 'newForm'
 

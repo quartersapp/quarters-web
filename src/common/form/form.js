@@ -1,11 +1,38 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { createSelector, createStructuredSelector } from 'reselect'
 import Immutable from 'seamless-immutable'
 import PropTypes from 'prop-types'
+import {
+  compose,
+  setPropTypes,
+  withContext,
+  defaultProps,
+  setDisplayName
+} from 'recompose'
 import { initializeForm, destroyForm, renameForm } from './actions'
 
-export class Form extends Component {
+export const formValuesSelector = createSelector(
+  (state, props) => props.name,
+  state => state.form,
+  (formName, formState) => Immutable.static.getIn(formState, [formName, 'values'], {})
+)
+
+export const Form = compose(
+  setDisplayName('Form'),
+  defaultProps({ destroyOnUnmount: true }),
+  setPropTypes({
+    children: PropTypes.node,
+    name: PropTypes.string.isRequired,
+    onSubmit: PropTypes.func,
+    /* If set to true, will dispatch action to destroy form state on unmount */
+    destroyOnUnmount: PropTypes.bool.isRequired
+  }),
+  withContext(
+    { form: PropTypes.string },
+    props => ({ form: props.name })
+  )
+)(class Form extends PureComponent {
   componentWillMount () {
     this.props.initializeForm(this.props.name)
   }
@@ -17,46 +44,24 @@ export class Form extends Component {
   }
 
   componentWillUnmount () {
-    this.props.destroyForm(this.props.name)
-  }
-
-  /**
-   * Set the form name to the context so that field
-   * components have access to the form name
-   */
-  getChildContext () {
-    return { form: this.props.name }
+    if (this.props.destroyOnUnmount) {
+      this.props.destroyForm(this.props.name)
+    }
   }
 
   handleSubmit = e => {
     e.preventDefault()
-    this.props.onSubmit && this.props.onSubmit(this.props.values)
+    if (this.props.onSubmit) {
+      this.props.onSubmit(this.props.values)
+    }
   }
 
   render () {
     return (
-      <form onSubmit={this.handleSubmit}>
-        {this.props.children}
-      </form>
+      <form onSubmit={this.handleSubmit}>{this.props.children}</form>
     )
   }
-}
-
-Form.childContextTypes = {
-  form: PropTypes.string
-}
-
-Form.propTypes = {
-  name: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func,
-  children: PropTypes.node
-}
-
-export const formValuesSelector = createSelector(
-  (state, props) => props.name,
-  state => state.form,
-  (formName, formState) => Immutable.static.getIn(formState, [formName, 'values'], {})
-)
+})
 
 export default connect(
   createStructuredSelector({ values: formValuesSelector }),

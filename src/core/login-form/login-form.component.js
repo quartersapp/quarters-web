@@ -21,6 +21,7 @@ const LoginForm = ({ loginRequest, submitting, error, valid }) => (
     <Input type='text' placeholder='email' name='email' disabled={submitting} />
     <br />
     <Input type='password' placeholder='password' name='password' disabled={submitting} />
+    <br />
     <button type='submit' disabled={!valid || submitting}>Login</button>
     {error && (
       <p style={{ color: 'red' }}>
