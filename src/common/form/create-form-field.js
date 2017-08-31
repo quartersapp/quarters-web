@@ -6,6 +6,16 @@ import { changeFormValue } from './actions'
 
 export default WrappedComponent => {
   class FormField extends Component {
+    constructor (props, context) {
+      super(props, context)
+
+      if (!context.form) {
+        throw new Error(
+          'Field must be rendered inside of a Form'
+        )
+      }
+    }
+
     getFormName () {
       return this.context.form
     }
