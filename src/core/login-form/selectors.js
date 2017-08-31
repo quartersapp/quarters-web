@@ -10,11 +10,13 @@ const required = (errorMessage = 'This field is required') => value => {
 
 const createFormIsValidSelector = (form, validators) => createSelector(
   createFormValuesSelector(form),
-  values => Object.keys(validators).every(fieldName => {
-    const value = values[fieldName]
-    const validator = validators[fieldName]
-    return !validator(value)
-  })
+  values => {
+    return Object.keys(validators).every(fieldName => {
+      const value = values[fieldName]
+      const validator = validators[fieldName]
+      return !validator(value)
+    })
+  }
 )
 
 export const formIsValidSelector = createFormIsValidSelector(LOGIN_FORM_NAME, {

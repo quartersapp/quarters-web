@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions'
 
-import { CHANGE_FORM_VALUE, INITIALIZE_FORM, DESTROY_FORM } from './types'
+import { CHANGE_FORM_VALUE, INITIALIZE_FORM, DESTROY_FORM, RENAME_FORM } from './types'
 
 export const changeFormValue = createAction(
   CHANGE_FORM_VALUE,
@@ -20,5 +20,12 @@ export const destroyForm = createAction(
   DESTROY_FORM,
   (formName) => {
     return { form: formName }
+  }
+)
+
+export const renameForm = createAction(
+  RENAME_FORM,
+  (from, to) => {
+    return { from, to }
   }
 )

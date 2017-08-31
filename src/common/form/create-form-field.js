@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import { changeFormValue } from './actions'
 
-const createFormField = () => WrappedComponent => {
+export default WrappedComponent => {
   class FormField extends Component {
     getFormName () {
       return this.context.form
@@ -40,5 +40,3 @@ const createFormField = () => WrappedComponent => {
     { changeFormValue }
   )(FormField)
 }
-
-export default createFormField

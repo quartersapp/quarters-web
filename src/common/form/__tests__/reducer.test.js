@@ -3,11 +3,12 @@
 import {
   initializeForm,
   destroyForm,
+  renameForm,
   changeFormValue
 } from '../actions'
 import reducer from '../reducer'
 
-const TEST_FORM_NAME = 'testForm'
+const FORM_NAME = 'testForm'
 
 it('has an initial state', () => {
   expect(
@@ -15,27 +16,36 @@ it('has an initial state', () => {
   ).toEqual({})
 })
 
-it('can initialize and destroy a form', () => {
-  let state = reducer(undefined, initializeForm(TEST_FORM_NAME))
+it('can initialize, rename and destroy a form', () => {
+  let state = reducer(undefined, initializeForm(FORM_NAME))
 
   expect(state).toEqual({
-    [TEST_FORM_NAME]: {
+    [FORM_NAME]: {
+      values: {}
+    }
+  })
+
+  const NEW_FORM_NAME = 'newForm'
+  state = reducer(state, renameForm(FORM_NAME, NEW_FORM_NAME))
+
+  expect(state).toEqual({
+    [NEW_FORM_NAME]: {
       values: {}
     }
   })
 
   expect(
-    reducer(state, destroyForm(TEST_FORM_NAME))
+    reducer(state, destroyForm(NEW_FORM_NAME))
   ).toEqual({})
 })
 
 it('can set form values', () => {
-  const state = reducer(undefined, initializeForm(TEST_FORM_NAME))
+  const state = reducer(undefined, initializeForm(FORM_NAME))
 
   expect(
-    reducer(state, changeFormValue(TEST_FORM_NAME, 'testField', 'testValue'))
+    reducer(state, changeFormValue(FORM_NAME, 'testField', 'testValue'))
   ).toEqual({
-    [TEST_FORM_NAME]: {
+    [FORM_NAME]: {
       values: {
         'testField': 'testValue'
       }

@@ -4,16 +4,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { mount } from 'enzyme'
 import renderer from 'react-test-renderer'
-import createForm, { createForm as createFormComponent } from '../create-form'
+import Immutable from 'seamless-immutable'
+import { Form, formValuesSelector } from '../form'
 
 const noop = () => {}
 const FORM_NAME = 'testForm'
 
 describe('Form', () => {
   it('matches snapshot', () => {
-    const Form = createFormComponent({ name: FORM_NAME })
     const tree = renderer.create(
-      <Form initializeForm={noop}>
+      <Form name={FORM_NAME} initializeForm={noop}>
         Form goes here
       </Form>
     )
@@ -22,19 +22,16 @@ describe('Form', () => {
 
   it('sets the form name to the context', () => {
     /* Couldn't get context testing with enzyme working, so this will have to do */
-    const Form = createFormComponent({ name: FORM_NAME })
     expect(Form.childContextTypes).toEqual({ form: PropTypes.string })
-    expect(new Form().getChildContext()).toEqual({ form: FORM_NAME })
+    expect(new Form({ name: FORM_NAME }).getChildContext()).toEqual({ form: FORM_NAME })
   })
 
   it('dispatches initialize and destroy actions on mount', () => {
-    const Form = createFormComponent({ name: FORM_NAME })
-
     const initializeForm = jest.fn()
     const destroyForm = jest.fn()
 
     const wrapper = mount(
-      <Form initializeForm={initializeForm} destroyForm={destroyForm} />
+      <Form name={FORM_NAME} initializeForm={initializeForm} destroyForm={destroyForm} />
     )
     expect(initializeForm).toBeCalled()
     expect(destroyForm).not.toBeCalled()
@@ -43,8 +40,19 @@ describe('Form', () => {
     expect(destroyForm).toBeCalled()
   })
 
+  it('dispatches a rename action the form if the name prop changes', () => {
+    const renameForm = jest.fn()
+    const NEW_FORM_NAME = 'newForm'
+
+    const wrapper = mount(
+      <Form name={FORM_NAME} initializeForm={noop} renameForm={renameForm} />
+    )
+    expect(renameForm).not.toBeCalled()
+    wrapper.setProps({ name: NEW_FORM_NAME })
+    expect(renameForm).toBeCalledWith(FORM_NAME, NEW_FORM_NAME)
+  })
+
   it('calls props.handleSubmit with the form values onSubmit', () => {
-    const Form = createFormComponent({ name: FORM_NAME })
     const handleSubmit = jest.fn()
     const preventDefault = jest.fn()
     const formValues = {
@@ -53,7 +61,7 @@ describe('Form', () => {
     }
 
     const wrapper = mount(
-      <Form initializeForm={noop} onSubmit={handleSubmit} values={formValues} />
+      <Form name={FORM_NAME} initializeForm={noop} onSubmit={handleSubmit} values={formValues} />
     )
 
     wrapper.find('form').simulate('submit', { preventDefault })
@@ -62,13 +70,28 @@ describe('Form', () => {
   })
 })
 
-describe('createForm', () => {
-  it('throws an error if name is not provided', () => {
-    expect(createForm).toThrow(new Error('"name" option is required by createForm'))
+describe('formValuesSelector', () => {
+  let state
+
+  beforeEach(() => {
+    state = Immutable.static({
+      form: {
+        [FORM_NAME]: {
+          values: {
+            email: 'test@example.com',
+            password: '12345'
+          }
+        }
+      }
+    })
   })
 
-  it('returns a connected component', () => {
-    const ConnectedForm = createForm({ name: FORM_NAME })
-    expect(ConnectedForm.name).toEqual('Connect')
+  it('selects the form values for the current form name', () => {
+    const props = { name: FORM_NAME }
+
+    expect(formValuesSelector(state, props)).toEqual({
+      email: 'test@example.com',
+      password: '12345'
+    })
   })
 })

@@ -2,18 +2,26 @@ import Immutable from 'seamless-immutable'
 
 const initialState = Immutable.static.from({})
 
-export default (keyProp, INITIALIZE_ACTION, DESTROY_ACTION) => itemReducer => (state = initialState, action) => {
-  if (!action.payload || !action.payload[keyProp]) return state
+export default (keyProp, INITIALIZE_ACTION, DESTROY_ACTION, RENAME_ACTION) => {
+  return itemReducer => (state = initialState, action) => {
+    if (!action.payload) return state // only support fsa
+    const { payload } = action
 
-  const key = action.payload[keyProp]
+    const key = payload[keyProp]
 
-  if (action.type === DESTROY_ACTION) {
-    return Immutable.static.without(state, key)
-  } else if (action.type === INITIALIZE_ACTION) {
-    return Immutable.static.set(state, key, itemReducer(undefined, action))
-  } else if (state[key]) { // only call reducer if it has been initialized
-    return Immutable.static.set(state, key, itemReducer(state[key], action))
-  } else {
-    return state
+    switch (action.type) {
+      case INITIALIZE_ACTION:
+        return Immutable.static.set(state, key, itemReducer(undefined, action))
+      case DESTROY_ACTION:
+        return Immutable.static.without(state, key)
+      case RENAME_ACTION:
+        return Immutable.without(Immutable.static.set(state, payload.to, state[payload.from]), payload.from)
+    }
+
+    if (state[key]) {
+      return Immutable.static.set(state, key, itemReducer(state[key], action))
+    } else {
+      return state
+    }
   }
 }

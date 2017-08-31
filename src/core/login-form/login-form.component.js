@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
-import { createForm, createFormField } from 'common/form'
+import { Form, createFormField } from 'common/form'
 import {
   loginRequest,
   loggingInSelector,
@@ -10,11 +10,13 @@ import {
 import { LOGIN_FORM_NAME } from './constants'
 import { formIsValidSelector } from './selectors'
 
-const Form = createForm({ name: LOGIN_FORM_NAME })
-const Input = createFormField()(props => <input {...props} />)
+const Input = createFormField(props => <input {...props} />)
 
 const LoginForm = ({ loginRequest, submitting, error, valid }) => (
-  <Form onSubmit={({ email, password }) => loginRequest(email, password)}>
+  <Form
+    name={LOGIN_FORM_NAME}
+    onSubmit={({ email, password }) => loginRequest(email, password)}
+  >
     <h3>Login</h3>
     <Input type='text' placeholder='email' name='email' disabled={submitting} />
     <br />
