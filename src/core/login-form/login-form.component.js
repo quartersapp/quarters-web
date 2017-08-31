@@ -10,7 +10,7 @@ import {
 import { LOGIN_FORM_NAME } from './constants'
 import { formIsValidSelector } from './selectors'
 
-const Input = connectField(props => <input {...props} />)
+const Input = connectField('input')
 
 const LoginForm = ({ loginRequest, submitting, error, valid }) => (
   <Form
