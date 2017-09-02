@@ -13,7 +13,7 @@ const FORM_NAME = 'testForm'
 describe('Form', () => {
   it('matches snapshot', () => {
     const tree = renderer.create(
-      <Form name={FORM_NAME} initializeForm={noop}>
+      <Form name={FORM_NAME} registerForm={noop}>
         Form goes here
       </Form>
     )
@@ -26,30 +26,30 @@ describe('Form', () => {
     expect(new Form({ name: FORM_NAME }).getChildContext()).toEqual({ form: FORM_NAME })
   })
 
-  it('dispatches initialize and destroy actions on mount', () => {
-    const initializeForm = jest.fn()
-    const destroyForm = jest.fn()
+  it('dispatches register and deregister actions on mount/unmount', () => {
+    const registerForm = jest.fn()
+    const deregisterForm = jest.fn()
 
     const wrapper = mount(
-      <Form name={FORM_NAME} initializeForm={initializeForm} destroyForm={destroyForm} />
+      <Form name={FORM_NAME} registerForm={registerForm} deregisterForm={deregisterForm} />
     )
-    expect(initializeForm).toBeCalled()
-    expect(destroyForm).not.toBeCalled()
+    expect(registerForm).toBeCalled()
+    expect(deregisterForm).not.toBeCalled()
 
     wrapper.unmount()
-    expect(destroyForm).toBeCalled()
+    expect(deregisterForm).toBeCalled()
   })
 
-  it('dispatches a rename action the form if the name prop changes', () => {
-    const renameForm = jest.fn()
+  it('dispatches a move action the form if the name prop changes', () => {
+    const moveRegisteredForm = jest.fn()
     const NEW_FORM_NAME = 'newForm'
 
     const wrapper = mount(
-      <Form name={FORM_NAME} initializeForm={noop} renameForm={renameForm} />
+      <Form name={FORM_NAME} registerForm={noop} moveRegisteredForm={moveRegisteredForm} />
     )
-    expect(renameForm).not.toBeCalled()
+    expect(moveRegisteredForm).not.toBeCalled()
     wrapper.setProps({ name: NEW_FORM_NAME })
-    expect(renameForm).toBeCalledWith(FORM_NAME, NEW_FORM_NAME)
+    expect(moveRegisteredForm).toBeCalledWith(FORM_NAME, NEW_FORM_NAME)
   })
 
   it('calls props.handleSubmit with the form values onSubmit', () => {
@@ -61,7 +61,7 @@ describe('Form', () => {
     }
 
     const wrapper = mount(
-      <Form name={FORM_NAME} initializeForm={noop} onSubmit={handleSubmit} values={formValues} />
+      <Form name={FORM_NAME} registerForm={noop} onSubmit={handleSubmit} values={formValues} />
     )
 
     wrapper.find('form').simulate('submit', { preventDefault })

@@ -3,21 +3,21 @@ import { connect } from 'react-redux'
 import { createSelector, createStructuredSelector } from 'reselect'
 import Immutable from 'seamless-immutable'
 import PropTypes from 'prop-types'
-import { initializeForm, destroyForm, renameForm } from './actions'
+import { registerForm, deregisterForm, moveRegisteredForm } from './actions'
 
 export class Form extends Component {
   componentWillMount () {
-    this.props.initializeForm(this.props.name)
+    this.props.registerForm(this.props.name)
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.name !== this.props.name) {
-      this.props.renameForm(this.props.name, nextProps.name)
+      this.props.moveRegisteredForm(this.props.name, nextProps.name)
     }
   }
 
   componentWillUnmount () {
-    this.props.destroyForm(this.props.name)
+    this.props.deregisterForm(this.props.name)
   }
 
   /**
@@ -60,5 +60,5 @@ export const formValuesSelector = createSelector(
 
 export default connect(
   createStructuredSelector({ values: formValuesSelector }),
-  { initializeForm, renameForm, destroyForm }
+  { registerForm, moveRegisteredForm, deregisterForm }
 )(Form)

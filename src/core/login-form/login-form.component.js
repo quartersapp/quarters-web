@@ -18,7 +18,12 @@ const LoginForm = ({ loginRequest, submitting, error, valid }) => (
     onSubmit={({ email, password }) => loginRequest(email, password)}
   >
     <h3>Login</h3>
-    <Input type='text' placeholder='email' name='email' disabled={submitting} />
+    <Input
+      type='text'
+      placeholder='email'
+      name='email'
+      disabled={submitting}
+    />
     <br />
     <Input type='password' placeholder='password' name='password' disabled={submitting} />
     <button type='submit' disabled={!valid || submitting}>Login</button>
