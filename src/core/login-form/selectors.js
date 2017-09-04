@@ -1,25 +1,19 @@
 import { createSelector } from 'reselect'
+import {
+  combineValidators,
+  isRequired
+} from 'revalidate'
 import { createFormValuesSelector } from 'common/form'
 import { LOGIN_FORM_NAME } from './constants'
 
-const required = (errorMessage = 'This field is required') => value => {
-  if (value === null || value === undefined || value === '') {
-    return errorMessage
-  }
-}
-
-const createFormIsValidSelector = (form, validators) => createSelector(
-  createFormValuesSelector(form),
-  values => {
-    return Object.keys(validators).every(fieldName => {
-      const value = values[fieldName]
-      const validator = validators[fieldName]
-      return !validator(value)
-    })
-  }
-)
-
-export const formIsValidSelector = createFormIsValidSelector(LOGIN_FORM_NAME, {
-  email: required('Email is required'),
-  password: required('Password is required')
+const validator = combineValidators({
+  email: isRequired('Email'),
+  password: isRequired('Password')
 })
+
+const errorsSelector = createSelector(createFormValuesSelector(LOGIN_FORM_NAME), validator)
+
+export const formIsValidSelector = createSelector(
+  errorsSelector,
+  errors => Object.keys(errors).length === 0
+)

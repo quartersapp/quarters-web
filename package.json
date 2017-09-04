@@ -17,6 +17,7 @@
     "redux-create-reducer": "^1.1.1",
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1",
+    "revalidate": "^1.2.0",
     "seamless-immutable": "^7.1.2"
   },
   "devDependencies": {
