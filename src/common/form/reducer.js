@@ -1,18 +1,16 @@
 import { createReducer } from 'redux-create-reducer'
 import { combineReducers } from 'redux'
 import { static as Immutable } from 'seamless-immutable'
-import { registerForm, deregisterForm } from './actions'
 import {
   CHANGE_FORM_VALUE,
   REGISTER_FORM,
-  DEREGISTER_FORM,
-  MOVE_REGISTERED_FORM
+  DEREGISTER_FORM
 } from './types'
 
 const formReducer = combineReducers({
   values: createReducer(Immutable({}), {
-    [CHANGE_FORM_VALUE] (state, { payload }) {
-      return Immutable.set(state, payload.field, payload.value)
+    [CHANGE_FORM_VALUE] (state, { payload: { field, value } }) {
+      return Immutable.set(state, field, value)
     }
   }),
   numRegisteredForms: createReducer(0, {
@@ -37,15 +35,6 @@ const formsReducer = (state = initialState, action) => {
     } else {
       return Immutable.without(state, form)
     }
-  } else if (type === MOVE_REGISTERED_FORM) {
-    const { from, to } = payload
-
-    if (!state[to]) { // duplicate old form state
-      const duplicatedFormState = Immutable.set(state[from], 'numRegisteredForms', 0)
-      state = Immutable.set(state, to, duplicatedFormState)
-    }
-
-    return [registerForm(to), deregisterForm(from)].reduce(formsReducer, state)
   } else if (type === CHANGE_FORM_VALUE && state[payload.form]) {
     return Immutable.set(state, payload.form, formReducer(state[payload.form], action))
   } else { // proxy all remaining actions to each formReducer

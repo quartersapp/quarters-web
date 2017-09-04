@@ -3,11 +3,9 @@
 import {
   registerForm,
   deregisterForm,
-  moveRegisteredForm,
   changeFormValue
 } from '../actions'
 import reducer from '../reducer'
-import { static as Immutable } from 'seamless-immutable'
 
 const FORM_NAME = 'testForm'
 
@@ -52,59 +50,6 @@ it('can register and deregister forms', () => {
   expect(
     reducer(state, deregisterForm(FORM_NAME))
   ).toEqual({})
-})
-
-describe('moveRegisteredForm', () => {
-  it('can move registered forms', () => {
-    let state = Immutable({
-      [FORM_NAME]: {
-        values: {},
-        numRegisteredForms: 2
-      }
-    })
-
-    const NEW_FORM_NAME = 'newForm'
-    state = reducer(state, moveRegisteredForm(FORM_NAME, NEW_FORM_NAME))
-
-    expect(state).toEqual({
-      [FORM_NAME]: {
-        values: {},
-        numRegisteredForms: 1
-      },
-      [NEW_FORM_NAME]: {
-        values: {},
-        numRegisteredForms: 1
-      }
-    })
-
-    state = reducer(state, moveRegisteredForm(FORM_NAME, NEW_FORM_NAME))
-
-    expect(state).toEqual({
-      [NEW_FORM_NAME]: {
-        values: {},
-        numRegisteredForms: 2
-      }
-    })
-  })
-
-  it('retains values if the new form has not been initialized', () => {
-    let state = Immutable({
-      [FORM_NAME]: {
-        values: { some: 'values' },
-        numRegisteredForms: 1
-      }
-    })
-
-    const NEW_FORM_NAME = 'newForm'
-    state = reducer(state, moveRegisteredForm(FORM_NAME, NEW_FORM_NAME))
-
-    expect(state).toEqual({
-      [NEW_FORM_NAME]: {
-        values: { some: 'values' },
-        numRegisteredForms: 1
-      }
-    })
-  })
 })
 
 it('can set form values', () => {
