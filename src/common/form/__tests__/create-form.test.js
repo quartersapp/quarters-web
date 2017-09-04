@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { mount } from 'enzyme'
 import renderer from 'react-test-renderer'
-import Immutable from 'seamless-immutable'
 import { createForm } from '../create-form'
 
 const noop = () => {}

@@ -1,5 +1,7 @@
 import { createFormReducer } from 'common/form'
 
-export default createFormReducer({
+import { formReducerOptions as login } from 'core/login-form'
 
+export default createFormReducer({
+  login
 })

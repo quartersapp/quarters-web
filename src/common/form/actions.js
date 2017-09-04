@@ -11,8 +11,8 @@ export const changeFormValue = createAction(
 
 export const registerForm = createAction(
   REGISTER_FORM,
-  (formName, initialValues = {}) => {
-    return { form: formName, initialValues }
+  (formName) => {
+    return { form: formName }
   }
 )
 

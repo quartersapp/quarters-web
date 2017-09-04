@@ -5,9 +5,11 @@ import {
   deregisterForm,
   changeFormValue
 } from '../actions'
-import reducer from '../reducer'
+import createFormReducer from '../reducer'
 
 const FORM_NAME = 'testForm'
+
+const reducer = createFormReducer()
 
 it('has an initial state', () => {
   expect(
@@ -26,6 +28,7 @@ it('can register and deregister forms', () => {
   expect(state).toEqual({
     [FORM_NAME]: {
       values: {},
+      initialValues: {},
       numRegisteredForms: 1
     }
   })
@@ -34,6 +37,7 @@ it('can register and deregister forms', () => {
   expect(state).toEqual({
     [FORM_NAME]: {
       values: {},
+      initialValues: {},
       numRegisteredForms: 2
     }
   })
@@ -43,6 +47,7 @@ it('can register and deregister forms', () => {
   expect(state).toEqual({
     [FORM_NAME]: {
       values: {},
+      initialValues: {},
       numRegisteredForms: 1
     }
   })
@@ -50,6 +55,28 @@ it('can register and deregister forms', () => {
   expect(
     reducer(state, deregisterForm(FORM_NAME))
   ).toEqual({})
+})
+
+it('can populate initialValues using options', () => {
+  const reducerWithDefaultValue = createFormReducer({
+    [FORM_NAME]: {
+      initialValues: {
+        some: 'values'
+      }
+    }
+  })
+
+  expect(
+    reducerWithDefaultValue(undefined, registerForm(FORM_NAME))
+  ).toEqual({
+    [FORM_NAME]: {
+      values: {},
+      initialValues: {
+        some: 'values'
+      },
+      numRegisteredForms: 1
+    }
+  })
 })
 
 it('can set form values', () => {
@@ -62,6 +89,7 @@ it('can set form values', () => {
       values: {
         'testField': 'testValue'
       },
+      initialValues: {},
       numRegisteredForms: 1
     }
   })

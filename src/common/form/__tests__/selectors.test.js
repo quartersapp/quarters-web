@@ -20,7 +20,7 @@ describe('createFormValuesSelector', () => {
     expect(
       formValuesSelector({
         form: Immutable.static({
-          testForm: {
+          [FORM_NAME]: {
             values: {
               email: 'test@example.com',
               password: 'password'
@@ -31,6 +31,26 @@ describe('createFormValuesSelector', () => {
     ).toEqual({
       email: 'test@example.com',
       password: 'password'
+    })
+  })
+
+  it('merges with initialValues when form values are missing', () => {
+    expect(
+      formValuesSelector({
+        form: Immutable.static({
+          [FORM_NAME]: {
+            initialValues: {
+              password: ''
+            },
+            values: {
+              email: 'test@example.com'
+            }
+          }
+        })
+      })
+    ).toEqual({
+      email: 'test@example.com',
+      password: ''
     })
   })
 })

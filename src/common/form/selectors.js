@@ -1,5 +1,10 @@
-import Immutable from 'seamless-immutable'
-
 export const createFormValuesSelector = form => state => {
-  return Immutable.static.getIn(state.form, [form, 'values'], {})
+  const formState = state.form[form]
+  if (!formState) return {}
+
+  return Object.assign(
+    {},
+    formState.initialValues,
+    formState.values
+  )
 }

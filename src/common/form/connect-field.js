@@ -28,7 +28,8 @@ export default WrappedComponent => {
     render () {
       const form = this.getFormName()
       const field = this.props.name
-      const value = this.props.formState[form].values[field]
+      const formState = this.props.formState[form]
+      const value = formState.values[field] || formState.initialValues[field]
 
       return (
         <WrappedComponent {...this.props} onChange={this.handleChange} value={value} />
