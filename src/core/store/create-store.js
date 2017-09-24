@@ -12,7 +12,7 @@ export default ({ apolloClient, authenticated = false }) => {
 
   const store = createStore(
     createRootReducer({ apolloReducer }),
-    { auth: { authenticated } },
+    { common: { auth: { authenticated } } },
     composeEnhancers(
       applyMiddleware(
         sagaMiddleware,
