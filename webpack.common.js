@@ -51,7 +51,7 @@ module.exports = {
       template: resolve(paths.public, 'index.html')
     }),
     new EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: process.env.NODE_ENV || 'development'
     })
   ]
 }
