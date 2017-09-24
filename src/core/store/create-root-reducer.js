@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux'
+import { keaReducer } from 'kea'
 
-import { reducer as auth } from 'common/auth'
 import formReducer from './form-reducer'
+
+const commonReducer = keaReducer('common')
 
 export default ({ apolloReducer }) => combineReducers({
   apollo: apolloReducer,
-  auth,
+  common: commonReducer,
   form: formReducer
 })

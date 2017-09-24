@@ -4,13 +4,12 @@ import 'isomorphic-fetch'
 import { take, call, fork, put, cancel, select } from 'redux-saga/effects'
 import { API_URL } from 'config'
 
-import { loginStart, loginError, loginSuccess } from './actions'
-import { authenticatedSelector } from './selectors'
-import {
-  LOGIN_REQUEST,
-  LOGIN_ERROR,
-  LOGOUT
-} from './types'
+import logic from './logic'
+
+const {
+  actions: { loginRequest, loginStart, logout, loginError, loginSuccess },
+  selectors: { authenticated: authenticatedSelector }
+} = logic
 
 export function * manageAuthentication () {
   let authenticated = yield select(authenticatedSelector)
@@ -19,12 +18,12 @@ export function * manageAuthentication () {
     let loginTask
 
     if (!authenticated) {
-      const { payload: { email, password } } = yield take(LOGIN_REQUEST)
+      const { payload: { email, password } } = yield take(loginRequest)
       loginTask = yield fork(authorize, email, password)
     }
 
-    const action = yield take([LOGOUT, LOGIN_ERROR])
-    if (action.type === LOGOUT) {
+    const action = yield take([logout, loginError])
+    if (action.type === logout.toString()) {
       authenticated = false
       if (loginTask && loginTask.isRunning()) {
         yield cancel(loginTask)

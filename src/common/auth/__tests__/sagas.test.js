@@ -4,12 +4,15 @@
 import nock from 'nock'
 import { API_URL } from 'config'
 import sagaHelper from 'redux-saga-testing'
-import { loginRequest, loginStart, loginSuccess, loginError, logout } from '../actions'
-import { authenticatedSelector } from '../selectors'
-import { LOGOUT, LOGIN_REQUEST, LOGIN_ERROR } from '../types'
+import logic from '../logic'
 import { manageAuthentication, authorize, login } from '../sagas'
 import { call, put, select, take, fork, cancel } from 'redux-saga/effects'
 import { createMockTask } from 'redux-saga/utils'
+
+const {
+  actions: { loginRequest, loginStart, logout, loginError, loginSuccess },
+  selectors: { authenticated: authenticatedSelector }
+} = logic
 
 beforeEach(() => localStorage.clear())
 afterEach(() => nock.cleanAll())
@@ -27,7 +30,7 @@ describe('manageAuthentication', () => {
     })
 
     it('takes a login request', result => {
-      expect(result).toEqual(take(LOGIN_REQUEST))
+      expect(result).toEqual(take(loginRequest))
       return loginRequest(email, password)
     })
 
@@ -36,13 +39,13 @@ describe('manageAuthentication', () => {
       return createMockTask()
     })
 
-    it('takes a LOGIN_ERROR', result => {
-      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+    it('takes a loginError', result => {
+      expect(result).toEqual(take([logout, loginError]))
       return loginError(new Error('Invalid credentials'))
     })
 
-    it('takes a LOGIN_REQUEST', result => {
-      expect(result).toEqual(take(LOGIN_REQUEST))
+    it('takes a loginRequest', result => {
+      expect(result).toEqual(take(loginRequest))
     })
   })
 
@@ -55,7 +58,7 @@ describe('manageAuthentication', () => {
     })
 
     it('takes a login request', result => {
-      expect(result).toEqual(take(LOGIN_REQUEST))
+      expect(result).toEqual(take(loginRequest))
       return loginRequest(email, password)
     })
 
@@ -67,8 +70,8 @@ describe('manageAuthentication', () => {
       return loginTask
     })
 
-    it('takes a LOGOUT', result => {
-      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+    it('takes a logout', result => {
+      expect(result).toEqual(take([logout, loginError]))
       return logout()
     })
 
@@ -77,7 +80,7 @@ describe('manageAuthentication', () => {
     })
 
     it('takes a new login request', result => {
-      expect(result).toEqual(take(LOGIN_REQUEST))
+      expect(result).toEqual(take(loginRequest))
     })
   })
 
@@ -93,14 +96,14 @@ describe('manageAuthentication', () => {
       return true
     })
 
-    it('takes a LOGOUT action', result => {
-      expect(result).toEqual(take([LOGOUT, LOGIN_ERROR]))
+    it('takes a logout action', result => {
+      expect(result).toEqual(take([logout, loginError]))
       return logout()
     })
 
     it('clears the auth token from localStorage take a new login request', result => {
       expect(localStorage.getItem('authToken')).toEqual(null)
-      expect(result).toEqual(take(LOGIN_REQUEST))
+      expect(result).toEqual(take(loginRequest))
     })
   })
 })

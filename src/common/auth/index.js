@@ -1,8 +1,2 @@
-export { default as reducer } from './reducer'
+export { default as logic } from './logic'
 export { manageAuthentication } from './sagas'
-export { loginRequest, logout } from './actions'
-export {
-  authenticatedSelector,
-  loggingInSelector,
-  loginErrorMessageSelector
-} from './selectors'

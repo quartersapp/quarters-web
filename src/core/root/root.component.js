@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { createStructuredSelector } from 'reselect'
+import { connect } from 'kea'
 
-import { authenticatedSelector, logout } from 'common/auth'
+import { logic as authLogic } from 'common/auth'
 import { LoginForm } from 'core/login-form'
 import CurrentUser from './current-user.component'
 
 class Root extends Component {
   handleLogoutButtonClick = e => {
     e.preventDefault()
-    this.props.logout()
+    this.actions.logout()
   }
 
   render () {
@@ -28,9 +27,15 @@ class Root extends Component {
   }
 }
 
-export default connect(
-  createStructuredSelector({
-    authenticated: authenticatedSelector
-  }),
-  { logout }
-)(Root)
+export default connect({
+  actions: [
+    authLogic, [
+      'logout'
+    ]
+  ],
+  props: [
+    authLogic, [
+      'authenticated'
+    ]
+  ]
+})(Root)
