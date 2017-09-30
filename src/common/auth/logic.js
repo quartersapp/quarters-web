@@ -1,35 +1,41 @@
-import PropTypes from 'prop-types'
-import { kea } from 'kea'
+import { combineReducers } from 'redux'
+import { modularize, createReducer } from 'redux-modular'
 
-export default kea({
-  path: () => ['common', 'auth'],
+const PATH = 'auth'
 
-  actions: () => ({
+export default modularize({
+  actions: {
     loginRequest: (email, password) => ({ email, password }),
     loginSuccess: token => ({ token }),
     loginStart: payload => payload,
     loginError: error => error,
-    logout: true
-  }),
+    logout: () => null
+  },
 
-  reducers: ({ actions }) => ({
-    authenticated: [false, PropTypes.bool.isRequired, {
+  reducer: actions => combineReducers({
+    authenticated: createReducer(false, {
       [actions.loginSuccess]: () => true,
       [actions.loginError]: () => false,
       [actions.logout]: () => false
-    }],
+    }),
 
-    loggingIn: [false, PropTypes.bool.isRequired, {
+    loggingIn: createReducer(false, {
       [actions.loginStart]: () => true,
       [actions.loginSuccess]: () => false,
       [actions.loginError]: () => false,
       [actions.logout]: () => false
-    }],
+    }),
 
-    loginError: [null, PropTypes.object, {
+    loginError: createReducer(null, {
       [actions.loginError]: (_, payload) => payload.message,
       [actions.loginStart]: () => null,
       [actions.logout]: () => null
-    }]
+    })
+  }),
+
+  selectors: authSelector => ({
+    authenticated: state => authSelector(state).authenticated,
+    loggingIn: state => authSelector(state).loggingIn,
+    loginError: state => authSelector(state).loginError
   })
-})
+})(PATH)

@@ -4,7 +4,6 @@ import { set } from 'lodash'
 import logic from '../logic'
 
 const {
-  path,
   reducer,
   actions: { loginStart, loginSuccess, loginError, logout },
   selectors: {
@@ -14,7 +13,7 @@ const {
   }
 } = logic
 
-const buildState = state => set({}, path, state)
+const buildState = state => set({}, 'auth', state)
 
 it('sets authenticated when logging in and out', () => {
   let state = reducer(undefined, { type: '@@INIT' })
