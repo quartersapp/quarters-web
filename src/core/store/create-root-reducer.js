@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux'
-import { keaReducer } from 'kea'
-import { logic as auth } from 'common/auth'
+import loginForm from 'core/login-form/logic'
 
-const coreReducer = keaReducer('core')
+import { logic as auth } from 'common/auth'
 
 export default ({ apolloReducer }) => combineReducers({
   apollo: apolloReducer,
   auth: auth.reducer,
-  core: coreReducer
+  loginForm: loginForm.reducer
 })

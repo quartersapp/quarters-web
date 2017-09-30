@@ -1,5 +1,6 @@
-import PropTypes from 'prop-types'
-import { kea } from 'kea'
+import { createSelector } from 'reselect'
+import { combineReducers } from 'redux'
+import { modularize, createReducer } from 'redux-modular'
 import { combineValidators, isRequired } from 'revalidate'
 
 const initialValues = { email: '', password: '' }
@@ -9,31 +10,31 @@ const validate = combineValidators({
   password: isRequired('Password')
 })
 
-export default kea({
-  path: () => ['core', 'loginForm'],
-
-  actions: () => ({
-    reset: true,
+export default modularize({
+  actions: {
+    reset: () => null,
     changeValue: (field, value) => ({ field, value })
-  }),
+  },
 
-  reducers: ({ actions }) => ({
-    values: [initialValues, PropTypes.object.isRequired, {
+  reducer: actions => combineReducers({
+    values: createReducer(initialValues, {
       [actions.changeValue]: (state, { field, value }) => {
         return Object.assign({}, state, { [field]: value })
       },
       [actions.reset]: () => initialValues
-    }]
+    })
   }),
 
-  selectors: ({ selectors }) => ({
-    valid: [
-      function () { return [selectors.values] },
+  selectors: formState => {
+    const values = state => formState(state).values
+    const valid = createSelector(
+      values,
       values => {
         const errors = validate(values)
         return Object.keys(errors).length === 0
-      },
-      PropTypes.bool.isRequired
-    ]
-  })
-})
+      }
+    )
+
+    return { values, valid }
+  }
+})('loginForm')
