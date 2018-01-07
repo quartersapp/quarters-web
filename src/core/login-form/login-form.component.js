@@ -55,7 +55,7 @@ class LoginForm extends Component {
 export default connect(
   createStructuredSelector({
     submitting: authLogic.selectors.loggingIn,
-    loginError: authLogic.selectors.loginError,
+    error: authLogic.selectors.loginError,
     values: loginFormLogic.selectors.values,
     valid: loginFormLogic.selectors.valid
   }),
