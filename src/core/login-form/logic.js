@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { combineReducers } from 'redux'
-import { modularize, createReducer } from 'redux-modular'
+import { mount, createReducer } from 'redux-modular'
 import { combineValidators, isRequired } from 'revalidate'
 
 const initialValues = { email: '', password: '' }
@@ -10,7 +10,7 @@ const validate = combineValidators({
   password: isRequired('Password')
 })
 
-export default modularize({
+const loginFormLogic = {
   actions: {
     reset: () => null,
     changeValue: (field, value) => ({ field, value })
@@ -37,4 +37,6 @@ export default modularize({
 
     return { values, valid }
   }
-})('loginForm')
+}
+
+export default mount('loginForm', loginFormLogic)

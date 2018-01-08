@@ -15,7 +15,7 @@
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-create-reducer": "^1.1.1",
-    "redux-modular": "0.0.1",
+    "redux-modular": "^0.3.2",
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1",
     "revalidate": "^1.2.0",

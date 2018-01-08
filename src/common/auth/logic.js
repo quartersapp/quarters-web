@@ -1,9 +1,7 @@
 import { combineReducers } from 'redux'
-import { modularize, createReducer } from 'redux-modular'
+import { createReducer, mount } from 'redux-modular'
 
-const PATH = 'auth'
-
-export default modularize({
+export const logic = {
   actions: {
     loginRequest: (email, password) => ({ email, password }),
     loginSuccess: token => ({ token }),
@@ -38,4 +36,6 @@ export default modularize({
     loggingIn: state => authSelector(state).loggingIn,
     loginError: state => authSelector(state).loginError
   })
-})(PATH)
+}
+
+export default mount('auth', logic)
