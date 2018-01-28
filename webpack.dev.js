@@ -15,7 +15,11 @@ const developmentConfig = {
   devServer: {
     contentBase: resolve(__dirname, 'build'),
     publicPath: '/',
-    historyApiFallback: true
+    historyApiFallback: true,
+    watchOptions: {
+      aggregateTimeout: 300,
+      poll: 500
+    }
   },
 
   plugins: [
