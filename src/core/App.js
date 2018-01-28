@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
 
-import { Root } from './root'
+import { Root } from './Root'
 
 const App = ({ apolloClient, store }) => (
   <ApolloProvider store={store} client={apolloClient}>

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import { logic as authLogic } from 'common/auth'
 import { LoginForm } from 'core/login-form'
-import CurrentUser from './current-user.component'
+import CurrentUser from './CurrentUser'
 
 class Root extends Component {
   handleLogoutButtonClick = e => {
