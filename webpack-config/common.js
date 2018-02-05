@@ -8,9 +8,9 @@ const configPath = resolve(__dirname, 'config.json')
 writeFileSync(configPath, JSON.stringify(config))
 
 const paths = {
-  build: resolve(__dirname, 'build'),
-  src: resolve(__dirname, 'src'),
-  public: resolve(__dirname, 'public')
+  build: resolve(__dirname, '../build'),
+  src: resolve(__dirname, '../src'),
+  public: resolve(__dirname, '../public')
 }
 
 module.exports = {
@@ -43,6 +43,23 @@ module.exports = {
         'babel-loader'
       ],
       exclude: /node_modules/
+    }, {
+      test: /\.scss$/,
+      include: paths.src,
+      use: [
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1,
+            modules: true,
+            localIdentName: '[path][name]__[local]_[hash:base64:5]'
+          }
+        }, {
+          loader: 'postcss-loader'
+        }, {
+          loader: 'sass-loader'
+        }
+      ]
     }]
   },
 

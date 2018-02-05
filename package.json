@@ -22,6 +22,7 @@
     "seamless-immutable": "^7.1.2"
   },
   "devDependencies": {
+    "autoprefixer": "^7.2.5",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
@@ -31,20 +32,25 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "config": "^1.26.2",
+    "css-loader": "^0.28.9",
     "enzyme": "^2.9.1",
     "html-webpack-plugin": "^2.30.1",
     "jest": "^20.0.4",
     "nock": "^9.0.14",
+    "node-sass": "^4.7.2",
+    "postcss-loader": "^2.0.10",
     "react-test-renderer": "^15.6.1",
     "redux-saga-testing": "^1.0.5",
+    "sass-loader": "^6.0.6",
     "standard": "^10.0.3",
+    "style-loader": "^0.20.1",
     "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.1"
   },
   "scripts": {
-    "start": "webpack-dev-server --progress --config webpack.dev.js",
-    "build": "NODE_ENV=production webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --progress --config webpack-config/dev.js",
+    "build": "NODE_ENV=production webpack --config webpack-config/prod.js",
     "test": "jest --config jest-config.json",
     "posttest": "standard"
   },

@@ -34,4 +34,4 @@ const productionConfig = {
   ]
 }
 
-module.exports = merge.smart(require('./webpack.common.js'), productionConfig)
+module.exports = merge.smart(require('./common.js'), productionConfig)
