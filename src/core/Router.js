@@ -7,6 +7,7 @@ import {
 import * as auth from 'common/auth'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
+import { SignupPage } from 'core/signup'
 
 const RedirectToSignupIfNotAuth = connect(
   createStructuredSelector({
@@ -18,6 +19,7 @@ const Router = () => (
   <BrowserRouter>
     <div>
       <Route exact path='/' component={RedirectToSignupIfNotAuth} />
+      <Route path='/' component={SignupPage} />
     </div>
   </BrowserRouter>
 )

@@ -21,7 +21,7 @@ export default ({ apolloClient, authenticated = false }) => {
     )
   )
 
-  sagaMiddleware.run(rootSaga)
+  sagaMiddleware.run(rootSaga, apolloClient)
 
   if (module.hot) {
     module.hot.accept('./create-root-reducer', () => {

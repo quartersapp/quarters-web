@@ -1,9 +1,12 @@
-import { all } from 'redux-saga/effects'
+import { all, setContext } from 'redux-saga/effects'
 
-import { manageAuthentication } from 'common/auth'
+import * as auth from 'common/auth'
+import * as signup from 'core/signup'
 
-export default function * rootSaga () {
+export default function * rootSaga (apolloClient) {
+  yield setContext({ apolloClient })
   yield all([
-    manageAuthentication()
+    auth.manageAuthentication(),
+    signup.signupSaga()
   ])
 }
