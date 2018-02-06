@@ -8,15 +8,12 @@ export default ({ apolloClient, authenticated = false }) => {
 
   const sagaMiddleware = createSagaMiddleware()
 
-  const apolloReducer = apolloClient.reducer()
-
   const store = createStore(
-    createRootReducer({ apolloReducer }),
+    createRootReducer(),
     { auth: { authenticated } },
     composeEnhancers(
       applyMiddleware(
-        sagaMiddleware,
-        apolloClient.middleware()
+        sagaMiddleware
       )
     )
   )

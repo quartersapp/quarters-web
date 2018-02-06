@@ -12,7 +12,7 @@ export const { actions, reducer, selectors } = mount('signup', {
   reducer: actions => combineReducers({
     submitting: createReducer(false, {
       [actions.submitStart]: () => true,
-      [actions.submitStop]: () => false,
+      [actions.submitSuccess]: () => false,
       [actions.submitError]: () => false
     }),
     submitError: createReducer(null, {
