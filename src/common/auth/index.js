@@ -1,2 +1,2 @@
-export { default as logic } from './logic'
+export { actions, reducer, selectors } from './logic'
 export { manageAuthentication } from './sagas'

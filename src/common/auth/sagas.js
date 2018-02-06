@@ -4,12 +4,12 @@ import 'isomorphic-fetch'
 import { take, call, fork, put, cancel, select } from 'redux-saga/effects'
 import { API_URL } from 'config'
 
-import logic from './logic'
+import { actions, selectors } from './logic'
 
 const {
-  actions: { loginRequest, loginStart, logout, loginError, loginSuccess },
-  selectors: { authenticated: authenticatedSelector }
-} = logic
+  loginRequest, loginStart, logout, loginError, loginSuccess
+} = actions
+const { authenticated: authenticatedSelector } = selectors
 
 export function * manageAuthentication () {
   let authenticated = yield select(authenticatedSelector)

@@ -1,67 +1,42 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
-import { logic as authLogic } from 'common/auth'
-import loginFormLogic from './logic'
+import { combineValidators, isRequired } from 'revalidate'
+import * as auth from 'common/auth'
+import { Formik, Form, Field } from 'formik'
 
-class LoginForm extends Component {
-  componentWillUnmount () {
-    this.props.reset()
-  }
-
-  render () {
-    const { submitting, error, valid, values, loginRequest, changeValue } = this.props
-
-    return (
-      <form onSubmit={e => {
-        e.preventDefault()
-        loginRequest(values.email, values.password)
-      }}>
+const LoginForm = ({ loginRequest, submitting, error }) => (
+  <Formik
+    initialValues={{ email: '', password: '' }}
+    validate={combineValidators({
+      email: isRequired('Email'),
+      password: isRequired('Password')
+    })}
+    onSubmit={({ email, password }) => loginRequest(email, password)}
+    render={({ handleSubmit, isValid }) => (
+      <Form>
         <h3>Login</h3>
-        <input
-          type='text'
-          placeholder='email'
-          name='email'
-          disabled={submitting}
-          value={values.email}
-          onChange={e => {
-            e.preventDefault()
-            changeValue('email', e.target.value)
-          }}
-        />
+        <Field name='email' type='text' placeholder='email' />
         <br />
-        <input
-          type='password'
-          placeholder='password'
-          name='password'
-          disabled={submitting}
-          value={values.password}
-          onChange={e => {
-            e.preventDefault()
-            changeValue('password', e.target.value)
-          }}
-        />
-        <button type='submit' disabled={!valid || submitting}>Login</button>
+        <Field name='password' type='password' placeholder='password' />
+        <br />
+        <button type='submit' disabled={!isValid || submitting}>Login</button>
         {error && (
           <p style={{ color: 'red' }}>
             {error}
           </p>
         )}
-      </form>
-    )
-  }
-}
+      </Form>
+    )}
+  />
+)
 
 export default connect(
   createStructuredSelector({
-    submitting: authLogic.selectors.loggingIn,
-    error: authLogic.selectors.loginError,
-    values: loginFormLogic.selectors.values,
-    valid: loginFormLogic.selectors.valid
+    submitting: auth.selectors.loggingIn,
+    error: auth.selectors.loginError
   }),
   {
-    loginRequest: authLogic.actions.loginRequest,
-    reset: loginFormLogic.actions.reset,
-    changeValue: loginFormLogic.actions.changeValue
+    loginRequest: auth.actions.loginRequest
   }
 )(LoginForm)

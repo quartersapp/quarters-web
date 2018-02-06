@@ -38,4 +38,4 @@ export const logic = {
   })
 }
 
-export default mount('auth', logic)
+export const { actions, reducer, selectors } = mount('auth', logic)
