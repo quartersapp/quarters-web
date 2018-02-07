@@ -3,6 +3,7 @@ import { actions, reducer, selectors } from './logic'
 export { reducer }
 export const {
   loginRequest,
+  loginSuccess,
   logout
 } = actions
 export const {
@@ -10,4 +11,4 @@ export const {
   loggingInSelector,
   loginErrorSelector
 } = selectors
-export { default as saga } from './saga'
+export { default as saga, login } from './saga'

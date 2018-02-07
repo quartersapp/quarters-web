@@ -4,6 +4,7 @@ import { propertySelectors } from 'common/helpers'
 import { getContext, takeLatest, call, put } from 'redux-saga/effects'
 import gql from 'graphql-tag'
 import { unexpectedError } from 'common/errors'
+import { login, loginSuccess } from 'common/auth'
 
 export const { actions, reducer, selectors } = mount('signup', {
   actions: {
@@ -37,6 +38,9 @@ function * signup (apolloClient, action) {
   yield put(actions.submitStart())
   try {
     yield call(mutate, apolloClient, action.payload)
+    const { email, password } = action.payload
+    const token = yield call(login, email, password)
+    yield put(loginSuccess(token))
     yield put(actions.submitSuccess())
   } catch (err) {
     if (err.graphQLErrors && err.graphQLErrors.some(err => err.message === 'A user with that email already exists')) {
