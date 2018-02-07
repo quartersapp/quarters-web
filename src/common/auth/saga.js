@@ -71,7 +71,7 @@ export const login = async (email, password) => {
 }
 
 export function persistToken (action) {
-  localStorage.setItem('authToken', action.payload)
+  localStorage.setItem('authToken', action.payload.token)
 }
 
 export function deleteToken (action) {
