@@ -3,7 +3,7 @@ import { mount, createReducer } from 'redux-modular'
 import { propertySelectors } from 'common/helpers'
 import { getContext, takeLatest, call, put } from 'redux-saga/effects'
 import gql from 'graphql-tag'
-import { unexpectedError, GraphqlError } from 'common/errors'
+import { unexpectedError } from 'common/errors'
 
 export const { actions, reducer, selectors } = mount('signup', {
   actions: {
@@ -39,7 +39,7 @@ function * signup (apolloClient, action) {
     yield call(mutate, apolloClient, action.payload)
     yield put(actions.submitSuccess())
   } catch (err) {
-    if (err instanceof GraphqlError && err.errors.some(err => err.message === 'A user with that email already exists')) {
+    if (err.graphQLErrors && err.graphQLErrors.some(err => err.message === 'A user with that email already exists')) {
       yield put(actions.submitError(new Error('A user with that email already exists')))
     } else {
       yield put(actions.submitError(new Error('An unknown error occurred')))
@@ -51,25 +51,14 @@ function * signup (apolloClient, action) {
 const mutation = gql`
   mutation createHostUser ($input: CreateHostUserInput!) {
     createHostUser(input: $input) {
-      user {
-        name,
-        email
-      }
+      user { name, email }
     }
   }
 `
 
 async function mutate (apolloClient, payload) {
-  const result = await apolloClient.mutate({
+  return apolloClient.mutate({
     mutation,
-    variables: { input: payload },
-    errorPolicy: 'all'
+    variables: { input: payload }
   })
-
-  // TODO investigate apollo link
-  if (result.errors) {
-    throw new GraphqlError(result.errors)
-  }
-
-  return result
 }

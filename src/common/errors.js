@@ -13,10 +13,3 @@ export function * saga () {
     console.error(err, err.errors)
   })
 }
-
-export class GraphqlError extends Error {
-  constructor (errors) {
-    super('Unexpected graphql error')
-    this.errors = errors
-  }
-}
