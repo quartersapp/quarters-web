@@ -9,9 +9,9 @@ import { actions, selectors } from './logic'
 const {
   loginRequest, loginStart, logout, loginError, loginSuccess
 } = actions
-const { authenticated: authenticatedSelector } = selectors
+const { authenticatedSelector } = selectors
 
-export function * manageAuthentication () {
+export default function * authSaga () {
   let authenticated = yield select(authenticatedSelector)
 
   while (true) {

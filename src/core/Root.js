@@ -2,17 +2,15 @@ import React, { Component } from 'react'
 import { createStructuredSelector } from 'reselect'
 import { connect } from 'react-redux'
 
-import * as auth from 'common/auth'
+import { authenticatedSelector, logout } from 'common/auth'
 import { LoginForm } from 'core/login-form'
 import Router from './Router'
 
 const TempLoginHandler = connect(
   createStructuredSelector({
-    authenticated: auth.selectors.authenticated
+    authenticated: authenticatedSelector
   }),
-  {
-    logout: auth.actions.logout
-  }
+  { logout }
 )(class extends Component {
   handleLogoutButtonClick = e => {
     e.preventDefault()

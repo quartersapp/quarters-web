@@ -66,8 +66,8 @@ const SignupPage = ({ submitting, submitRequest, submitError }) => (
 
 export default connect(
   createStructuredSelector({
-    submitting: selectors.submitting,
-    submitError: selectors.submitError
+    submitting: selectors.submittingSelector,
+    submitError: selectors.submitErrorSelector
   }),
   { submitRequest: actions.submitRequest }
 )(SignupPage)

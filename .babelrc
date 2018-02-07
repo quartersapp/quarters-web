@@ -10,6 +10,9 @@
   "plugins": [
     "react-hot-loader/babel",
     "transform-class-properties",
-    "graphql-tag"
+    "graphql-tag",
+    ["babel-plugin-transform-builtin-extend", {
+      "globals": ["Error"]
+    }]
   ]
 }

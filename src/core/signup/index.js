@@ -1,3 +1,3 @@
 export { default as SignupPage } from './SignupPage'
-export { signupSaga } from './sagas'
+export { default as saga } from './saga'
 export { reducer } from './logic'

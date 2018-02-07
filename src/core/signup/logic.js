@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import { mount, createReducer } from 'redux-modular'
+import { propertySelectors } from 'common/helpers'
 
 export const { actions, reducer, selectors } = mount('signup', {
   actions: {
@@ -16,13 +17,10 @@ export const { actions, reducer, selectors } = mount('signup', {
       [actions.submitError]: () => false
     }),
     submitError: createReducer(null, {
-      [actions.submitError]: (_, err) => err.message,
+      [actions.submitError]: (_, error) => error.message,
       [actions.submitStart]: false
     })
   }),
 
-  selectors: localStateSelector => ({
-    submitting: state => localStateSelector(state).submitting,
-    submitError: state => localStateSelector(state).submitError
-  })
+  selectors: propertySelectors(['submitting', 'submitError'])
 })

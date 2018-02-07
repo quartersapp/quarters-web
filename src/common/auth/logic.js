@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import { createReducer, mount } from 'redux-modular'
+import { propertySelectors } from 'common/helpers'
 
 export const logic = {
   actions: {
@@ -31,11 +32,11 @@ export const logic = {
     })
   }),
 
-  selectors: authSelector => ({
-    authenticated: state => authSelector(state).authenticated,
-    loggingIn: state => authSelector(state).loggingIn,
-    loginError: state => authSelector(state).loginError
-  })
+  selectors: propertySelectors([
+    'authenticated',
+    'loggingIn',
+    'loginError'
+  ])
 }
 
 export const { actions, reducer, selectors } = mount('auth', logic)

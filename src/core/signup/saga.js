@@ -1,21 +1,9 @@
 import { getContext, takeLatest, call, put } from 'redux-saga/effects'
-import { actions } from './logic'
 import gql from 'graphql-tag'
+import { actions } from './logic'
+import { unexpectedError, GraphqlError } from 'common/errors'
 
-class ExistingEmailError extends Error {
-  constructor () {
-    super('A user with that email already exists')
-  }
-}
-
-class UnknownError extends Error {
-  constructor (graphqlErrors) {
-    super('An unknown error occurred')
-    this.graphqlErrors = graphqlErrors
-  }
-}
-
-export function * signupSaga () {
+export default function * signupSaga () {
   const apolloClient = yield getContext('apolloClient')
   yield takeLatest(actions.submitRequest, signup, apolloClient)
 }
@@ -24,9 +12,15 @@ function * signup (apolloClient, action) {
   yield put(actions.submitStart())
   try {
     yield call(mutate, apolloClient, action.payload)
+    yield call()
     yield put(actions.submitSuccess())
   } catch (err) {
-    yield put(actions.submitError(err))
+    if (err instanceof GraphqlError && err.errors.some(err => err.message === 'A user with that email already exists')) {
+      yield put(actions.submitError(new Error('A user with that email already exists')))
+    } else {
+      yield put(actions.submitError(new Error('An unknown error occurred')))
+      yield put(unexpectedError(err))
+    }
   }
 }
 
@@ -49,11 +43,7 @@ async function mutate (apolloClient, payload) {
   })
 
   if (result.errors) {
-    if (result.errors.some(err => err.message === 'A user with that email already exists')) {
-      throw new ExistingEmailError()
-    } else {
-      throw new UnknownError(result.errors)
-    }
+    throw new GraphqlError(result.errors)
   }
 
   return result

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { combineValidators, isRequired } from 'revalidate'
-import * as auth from 'common/auth'
+import { loggingInSelector, loginErrorSelector, loginRequest } from 'common/auth'
 import { Formik, Form, Field } from 'formik'
 
 const LoginForm = ({ loginRequest, submitting, error }) => (
@@ -33,10 +33,10 @@ const LoginForm = ({ loginRequest, submitting, error }) => (
 
 export default connect(
   createStructuredSelector({
-    submitting: auth.selectors.loggingIn,
-    error: auth.selectors.loginError
+    submitting: loggingInSelector,
+    error: loginErrorSelector
   }),
   {
-    loginRequest: auth.actions.loginRequest
+    loginRequest: loginRequest
   }
 )(LoginForm)

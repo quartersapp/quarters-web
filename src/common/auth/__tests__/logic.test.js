@@ -7,58 +7,58 @@ const {
   reducer,
   actions: { loginStart, loginSuccess, loginError, logout },
   selectors: {
-    authenticated,
-    loggingIn,
-    loginError: loginErrorMessage
+    authenticatedSelector,
+    loggingInSelector,
+    loginErrorSelector
   }
 } = mount(null, logic)
 
 it('sets authenticated when logging in and out', () => {
   let state = reducer(undefined, { type: '@@INIT' })
-  expect(authenticated(state)).toEqual(false)
+  expect(authenticatedSelector(state)).toEqual(false)
 
   state = reducer(state, loginSuccess('some_token'))
-  expect(authenticated(state)).toEqual(true)
+  expect(authenticatedSelector(state)).toEqual(true)
 
   state = reducer(state, logout())
-  expect(authenticated(state)).toEqual(false)
+  expect(authenticatedSelector(state)).toEqual(false)
 })
 
 it('sets loggingIn while a login is occuring', () => {
   let state = reducer(undefined, { type: '@@INIT' })
-  expect(loggingIn(state)).toEqual(false)
+  expect(loggingInSelector(state)).toEqual(false)
 
   state = reducer(state, loginStart())
-  expect(loggingIn(state)).toEqual(true)
+  expect(loggingInSelector(state)).toEqual(true)
 
   state = reducer(state, loginSuccess('api_token'))
-  expect(loggingIn(state)).toEqual(false)
+  expect(loggingInSelector(state)).toEqual(false)
 
   state = reducer(state, loginStart())
-  expect(loggingIn(state)).toEqual(true)
+  expect(loggingInSelector(state)).toEqual(true)
 
   state = reducer(state, loginError(new Error('Something went wrong')))
-  expect(loggingIn(state)).toEqual(false)
+  expect(loggingInSelector(state)).toEqual(false)
 })
 
 it('sets loginError with the error message', () => {
   let state = reducer(undefined, { type: '@@INIT' })
-  expect(loginErrorMessage(state)).toEqual(null)
+  expect(loginErrorSelector(state)).toEqual(null)
 
   state = reducer(state, loginError(new Error('Invalid credentials')))
-  expect(loginErrorMessage(state)).toEqual('Invalid credentials')
+  expect(loginErrorSelector(state)).toEqual('Invalid credentials')
 
   state = reducer(state, loginStart())
-  expect(loginErrorMessage(state)).toEqual(null)
+  expect(loginErrorSelector(state)).toEqual(null)
 })
 
 it('manages logout state when login is cancelled', () => {
   let state = reducer(undefined, loginStart())
 
   state = reducer(state, logout())
-  expect(loggingIn(state)).toEqual(false)
+  expect(loggingInSelector(state)).toEqual(false)
 
   state = reducer(state, loginError(new Error('Something went wrong')))
   state = reducer(state, logout())
-  expect(loginErrorMessage(state)).toEqual(null)
+  expect(loginErrorSelector(state)).toEqual(null)
 })

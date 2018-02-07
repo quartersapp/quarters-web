@@ -5,13 +5,13 @@ import nock from 'nock'
 import { API_URL } from 'config'
 import sagaHelper from 'redux-saga-testing'
 import logic from '../logic'
-import { manageAuthentication, authorize, login } from '../sagas'
+import saga, { authorize, login } from '../sagas'
 import { call, put, select, take, fork, cancel } from 'redux-saga/effects'
 import { createMockTask } from 'redux-saga/utils'
 
 const {
   actions: { loginRequest, loginStart, logout, loginError, loginSuccess },
-  selectors: { authenticated: authenticatedSelector }
+  selectors: { authenticatedSelector }
 } = logic
 
 beforeEach(() => localStorage.clear())
@@ -20,9 +20,9 @@ afterEach(() => nock.cleanAll())
 const email = 'test@example.com'
 const password = 'password'
 
-describe('manageAuthentication', () => {
+describe('saga', () => {
   describe('logging in after a failed login attempt', () => {
-    const it = sagaHelper(manageAuthentication())
+    const it = sagaHelper(saga())
 
     it('checks if the user is currently authenticated', result => {
       expect(result).toEqual(select(authenticatedSelector))
@@ -50,7 +50,7 @@ describe('manageAuthentication', () => {
   })
 
   describe('cancelling a pending login', () => {
-    const it = sagaHelper(manageAuthentication())
+    const it = sagaHelper(saga())
 
     it('checks if the user is currently authenticated', result => {
       expect(result).toEqual(select(authenticatedSelector))
@@ -85,7 +85,7 @@ describe('manageAuthentication', () => {
   })
 
   describe('logging out then back in', () => {
-    const it = sagaHelper(manageAuthentication())
+    const it = sagaHelper(saga())
 
     beforeEach(() => {
       localStorage.setItem('authToken', 'some_token')
