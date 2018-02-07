@@ -1,7 +1,7 @@
 /* global fetch localStorage */
 
 import 'isomorphic-fetch'
-import { take, call, fork, put, cancel, select } from 'redux-saga/effects'
+import { all, take, call, fork, put, cancel, select, takeEvery } from 'redux-saga/effects'
 import { API_URL } from 'config'
 
 import { actions, selectors } from './logic'
@@ -12,6 +12,16 @@ const {
 const { authenticatedSelector } = selectors
 
 export default function * authSaga () {
+  yield all([
+    manageAuthentication(),
+    all([
+      takeEvery(loginSuccess, persistToken),
+      takeEvery(logout, deleteToken)
+    ])
+  ])
+}
+
+export function * manageAuthentication () {
   let authenticated = yield select(authenticatedSelector)
 
   while (true) {
@@ -28,7 +38,6 @@ export default function * authSaga () {
       if (loginTask && loginTask.isRunning()) {
         yield cancel(loginTask)
       }
-      localStorage.removeItem('authToken')
     }
   }
 }
@@ -38,8 +47,6 @@ export function * authorize (email, password) {
 
   try {
     const token = yield call(login, email, password)
-
-    localStorage.setItem('authToken', token)
     yield put(loginSuccess(token))
   } catch (err) {
     yield put(loginError(err))
@@ -61,4 +68,12 @@ export const login = async (email, password) => {
 
   const { token } = await response.json()
   return token
+}
+
+export function persistToken (action) {
+  localStorage.setItem('authToken', action.payload)
+}
+
+export function deleteToken (action) {
+  localStorage.removeItem('authToken')
 }

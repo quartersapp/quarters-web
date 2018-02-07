@@ -1,28 +1,25 @@
 /* eslint-env jest */
-/* global localStorage */
+/* global */
 
 import nock from 'nock'
 import { API_URL } from 'config'
 import sagaHelper from 'redux-saga-testing'
-import logic from '../logic'
-import saga, { authorize, login } from '../sagas'
+import { actions, selectors } from '../logic'
+import { manageAuthentication, authorize, login } from '../saga'
 import { call, put, select, take, fork, cancel } from 'redux-saga/effects'
 import { createMockTask } from 'redux-saga/utils'
 
-const {
-  actions: { loginRequest, loginStart, logout, loginError, loginSuccess },
-  selectors: { authenticatedSelector }
-} = logic
+const { loginRequest, loginStart, logout, loginError, loginSuccess } = actions
+const { authenticatedSelector } = selectors
 
-beforeEach(() => localStorage.clear())
 afterEach(() => nock.cleanAll())
 
 const email = 'test@example.com'
 const password = 'password'
 
-describe('saga', () => {
+describe('manageAuthentication', () => {
   describe('logging in after a failed login attempt', () => {
-    const it = sagaHelper(saga())
+    const it = sagaHelper(manageAuthentication())
 
     it('checks if the user is currently authenticated', result => {
       expect(result).toEqual(select(authenticatedSelector))
@@ -50,7 +47,7 @@ describe('saga', () => {
   })
 
   describe('cancelling a pending login', () => {
-    const it = sagaHelper(saga())
+    const it = sagaHelper(manageAuthentication())
 
     it('checks if the user is currently authenticated', result => {
       expect(result).toEqual(select(authenticatedSelector))
@@ -85,11 +82,7 @@ describe('saga', () => {
   })
 
   describe('logging out then back in', () => {
-    const it = sagaHelper(saga())
-
-    beforeEach(() => {
-      localStorage.setItem('authToken', 'some_token')
-    })
+    const it = sagaHelper(manageAuthentication())
 
     it('checks if the user is currently authenticated', result => {
       expect(result).toEqual(select(authenticatedSelector))
@@ -101,8 +94,7 @@ describe('saga', () => {
       return logout()
     })
 
-    it('clears the auth token from localStorage take a new login request', result => {
-      expect(localStorage.getItem('authToken')).toEqual(null)
+    it('takes a new login request', result => {
       expect(result).toEqual(take(loginRequest))
     })
   })
@@ -123,8 +115,7 @@ describe('authorize', () => {
       return token
     })
 
-    it('stores the token in localStorage and dispatches a loginSuccess', (result) => {
-      expect(localStorage.getItem('authToken')).toEqual(token)
+    it('dispatches a loginSuccess', (result) => {
       expect(result).toEqual(put(loginSuccess(token)))
     })
 
