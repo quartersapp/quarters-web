@@ -22,7 +22,7 @@ export default ({ apolloClient, authenticated = false }) => {
 
   if (module.hot) {
     module.hot.accept('./create-root-reducer', () => {
-      const newReducer = require('./create-root-reducer').default({ apolloReducer })
+      const newReducer = require('./create-root-reducer').default()
       store.replaceReducer(newReducer)
     })
   }
