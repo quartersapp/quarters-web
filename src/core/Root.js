@@ -1,34 +1,28 @@
-import React, { Component } from 'react'
-import { createStructuredSelector } from 'reselect'
-import { connect } from 'react-redux'
+import React from 'react'
 
 import { authenticatedSelector, logout } from 'common/auth'
 import { LoginForm } from 'core/login-form'
 import Router from './Router'
+import { Redux } from 'common/components'
 
-const TempLoginHandler = connect(
-  createStructuredSelector({
-    authenticated: authenticatedSelector
-  }),
-  { logout }
-)(class extends Component {
-  handleLogoutButtonClick = e => {
-    e.preventDefault()
-    this.props.logout()
-  }
-
-  render () {
-    if (this.props.authenticated) {
-      return (
-        <button type='button' onClick={this.handleLogoutButtonClick}>
-          Logout
-        </button>
-      )
-    } else {
-      return <LoginForm />
-    }
-  }
-})
+const TempLoginHandler = () => (
+  <Redux actions={{ logout }} selector={authenticatedSelector}>
+    {({ actions: { logout }, state: authenticated }) => {
+      if (authenticated) {
+        return (
+          <button type='button' onClick={e => {
+            e.preventDefault()
+            logout()
+          }}>
+            Logout
+          </button>
+        )
+      } else {
+        return <LoginForm />
+      }
+    }}
+  </Redux>
+)
 
 const Root = () => (
   <div>

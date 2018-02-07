@@ -5,21 +5,20 @@ import {
   Redirect
 } from 'react-router-dom'
 import { authenticatedSelector } from 'common/auth'
-import { connect } from 'react-redux'
-import { createStructuredSelector } from 'reselect'
 import { SignupPage } from 'core/signup'
+import { Redux } from 'common/components'
 
-const RedirectToSignupIfNotAuth = connect(
-  createStructuredSelector({
-    authenticated: authenticatedSelector
-  })
-)(({ authenticated, Component }) => authenticated ? null : <Redirect to='/signup' />)
+const RedirectToSignupIfNotAuth = () => (
+  <Redux selector={authenticatedSelector}>
+    {({ state: authenticated }) => authenticated ? null : <Redirect to='/signup' />}
+  </Redux>
+)
 
 const Router = () => (
   <BrowserRouter>
     <div>
       <Route exact path='/' component={RedirectToSignupIfNotAuth} />
-      <Route path='/' component={SignupPage} />
+      <Route path='/signup' component={SignupPage} />
     </div>
   </BrowserRouter>
 )
