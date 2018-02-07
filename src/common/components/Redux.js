@@ -30,18 +30,19 @@ export default class Redux extends Component {
 
   componentDidMount () {
     this.unsubscribe = this.context.store.subscribe(() => {
-      if (this.unsubscribed) return // bit of a hack
+      if (this.unmounted) return // bit of a hack
       const selectedState = this.selectState()
       if (selectedState !== this.state) {
         this.setState({ selectedState })
+        if (this.unmounted) return // bit of a hack
         this.forceUpdate()
       }
     })
   }
 
   componentWillUnmount () {
-    this.unsubscribed = true // bit of a hack
-    return this.unsubscribe()
+    this.unmounted = true // bit of a hack
+    this.unsubscribe()
   }
 
   // TODO: add lifecycle to react to selector changes
