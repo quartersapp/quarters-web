@@ -10,6 +10,6 @@ export const { actions: { unexpectedError } } = mount('errors', {
 export function * saga () {
   yield takeEvery(unexpectedError, action => {
     const err = action.payload
-    console.error(err, err.errors)
+    console.error(err, err.graphQLErrors)
   })
 }
