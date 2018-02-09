@@ -1,7 +1,7 @@
 /* global fetch localStorage */
 
 import 'isomorphic-fetch'
-import { all, take, call, fork, put, cancel, select, takeEvery } from 'redux-saga/effects'
+import { all, take, call, fork, put, cancel, select, takeEvery, getContext } from 'redux-saga/effects'
 import { API_URL } from 'config'
 
 import { actions, selectors } from './logic'
@@ -16,7 +16,8 @@ export default function * authSaga () {
     manageAuthentication(),
     all([
       takeEvery(loginSuccess, persistToken),
-      takeEvery(logout, deleteToken)
+      takeEvery(logout, deleteToken),
+      takeEvery(logout, resetApolloStore)
     ])
   ])
 }
@@ -76,4 +77,9 @@ export function persistToken (action) {
 
 export function deleteToken (action) {
   localStorage.removeItem('authToken')
+}
+
+export function * resetApolloStore () {
+  const client = yield getContext('apolloClient')
+  yield call(client.resetStore)
 }
