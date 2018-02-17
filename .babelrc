@@ -13,7 +13,6 @@
     "graphql-tag",
     ["babel-plugin-transform-builtin-extend", {
       "globals": ["Error"]
-    }],
-    "transform-object-rest-spread"
+    }]
   ]
 }

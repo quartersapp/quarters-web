@@ -23,23 +23,19 @@ export default class Redux extends Component {
   constructor (props, context) {
     super(props, context)
 
-    this.state = {}
-
     if (this.props.selector) {
-      this.state.selectedState = this.selectState()
+      this.state = { selectedState: this.selectState() }
     }
   }
 
   componentDidMount () {
     this.unsubscribe = this.context.store.subscribe(() => {
       if (this.unmounted) return // bit of a hack
-      if (this.props.selector) {
-        const selectedState = this.selectState()
-        if (selectedState !== this.state) {
-          this.setState({ selectedState })
-          if (this.unmounted) return // bit of a hack
-          this.forceUpdate()
-        }
+      const selectedState = this.selectState()
+      if (selectedState !== this.state) {
+        this.setState({ selectedState })
+        if (this.unmounted) return // bit of a hack
+        this.forceUpdate()
       }
     })
   }
