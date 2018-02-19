@@ -18,12 +18,24 @@ export default ({ apolloClient, authenticated = false }) => {
     )
   )
 
-  sagaMiddleware.run(rootSaga, apolloClient)
+  let sagaTask = sagaMiddleware.run(function * () {
+    yield rootSaga(apolloClient)
+  })
 
   if (module.hot) {
     module.hot.accept('./create-root-reducer', () => {
       const newReducer = require('./create-root-reducer').default()
       store.replaceReducer(newReducer)
+    })
+
+    module.hot.accept('./root-saga', () => {
+      const newRootSaga = require('./root-saga').default
+      sagaTask.cancel()
+      sagaTask.done.then(() => {
+        sagaTask = sagaMiddleware.run(function * replacedSaga (action) {
+          yield newRootSaga(apolloClient)
+        })
+      })
     })
   }
 
