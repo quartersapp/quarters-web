@@ -32,6 +32,12 @@ const developmentConfig = {
       use: ['style-loader'].concat(
         find(commonConfig.module.rules, rule => rule.test.test('.scss')).use
       )
+    }, {
+      test: /\.css$/,
+      include: /node_modules/,
+      use: ['style-loader'].concat(
+        find(commonConfig.module.rules, rule => rule.test.test('.css')).use
+      )
     }]
   },
 

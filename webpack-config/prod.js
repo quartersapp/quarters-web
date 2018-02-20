@@ -1,7 +1,14 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const { find } = require('lodash')
+const { resolve } = require('path')
+const commonConfig = require('./common')
 
 process.env.NODE_ENV = 'production' // set NODE_ENV for config import
+
+const extractAppCss = new ExtractTextPlugin('app.[chunkhash].css')
+const extractVendorCss = new ExtractTextPlugin('vendor.[chunkhash].css')
 
 const productionConfig = {
   output: {
@@ -10,6 +17,22 @@ const productionConfig = {
   },
 
   devtool: 'source-map',
+
+  module: {
+    rules: [{
+      test: /\.scss$/,
+      include: resolve(__dirname, '../src'),
+      use: extractAppCss.extract({
+        use: find(commonConfig.module.rules, rule => rule.test.test('.scss')).use
+      })
+    }, {
+      test: /\.css$/,
+      include: /node_modules/,
+      use: extractVendorCss.extract({
+        use: find(commonConfig.module.rules, rule => rule.test.test('.css')).use
+      })
+    }]
+  },
 
   plugins: [
     // extract vendor modules to common bundle
@@ -30,7 +53,9 @@ const productionConfig = {
     }),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true
-    })
+    }),
+    extractAppCss,
+    extractVendorCss
   ]
 }
 

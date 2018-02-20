@@ -60,6 +60,12 @@ module.exports = {
           loader: 'sass-loader'
         }
       ]
+    }, {
+      test: /\.css$/,
+      include: /node_modules/,
+      use: [{
+        loader: 'css-loader'
+      }]
     }]
   },
 
