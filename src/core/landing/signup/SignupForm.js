@@ -11,7 +11,7 @@ import { isEmail } from './validators'
 import { actions, selectors } from './logic'
 import { Redux } from 'common/components'
 
-const SignupPage = () => (
+const SignupForm = () => (
   <div>
     <h2>Sign up</h2>
     <Redux
@@ -75,4 +75,4 @@ const SignupPage = () => (
   </div>
 )
 
-export default SignupPage
+export default SignupForm

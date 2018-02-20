@@ -5,10 +5,11 @@ import {
   Redirect
 } from 'react-router-dom'
 import { authenticatedSelector } from 'common/auth'
-import { SignupPage } from 'core/signup'
+import { LandingPage } from 'core/landing'
 import { Redux } from 'common/components'
+import { Container } from './container'
 
-const RedirectIfNotAuth = ({ children = null, to = '/signup' }) => (
+const RedirectIfNotAuth = ({ children = null, to = '/landing' }) => (
   <Redux selector={authenticatedSelector}>
     {({ state: authenticated }) => authenticated ? children : <Redirect to={to} />}
   </Redux>
@@ -22,14 +23,14 @@ const RedirectIfAuth = ({ children, to }) => (
 
 const Router = () => (
   <BrowserRouter>
-    <div>
+    <Container>
       <Route exact path='/' component={RedirectIfNotAuth} />
-      <Route exact path='/signup' render={() => (
+      <Route exact path='/landing' render={() => (
         <RedirectIfAuth to='/'>
-          <SignupPage />
+          <LandingPage />
         </RedirectIfAuth>
       )} />
-    </div>
+    </Container>
   </BrowserRouter>
 )
 

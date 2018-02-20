@@ -8,6 +8,10 @@ import App from 'core/App'
 import { createStore } from 'core/store'
 import { createApolloClient } from 'core/apollo-client'
 
+// inject global styles
+import 'normalize.css/normalize.css'
+import 'common/styles/global.scss'
+
 const authenticated = localStorage.getItem('authToken') !== null
 
 const apolloClient = createApolloClient()
